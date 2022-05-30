@@ -12,9 +12,9 @@ import java.time.LocalDate;
 public class Film {
     private Long id;
     @NotBlank
-    @Size(max = 200)
     private String name;
-    @NonNull
+    @NotBlank
+    @Size(max = 200)
     private String description;
     private LocalDate releaseDate;
     @Min(1)

@@ -38,8 +38,8 @@ public class FilmController {
 
     @PutMapping
     public Film put(@Valid @RequestBody Film film) {
-        if(film.getId() == null) {
-            throw new InvalidFilmException("Id не должен быть пустым");
+        if(film.getId() == null || film.getId() <= 0) {
+            throw new InvalidUserException("Некорректный id");
         }
 
         if (film.getReleaseDate().isBefore(MIN_DATE)) {

@@ -44,8 +44,8 @@ public class UserController {
 
     @PutMapping
     public User put(@Valid @RequestBody User user) {
-        if(user.getId() == null) {
-            throw new InvalidUserException("Id не должен быть пустым");
+        if(user.getId() == null || user.getId() <= 0) {
+            throw new InvalidUserException("Некорректный id");
         }
         emails.add(user.getEmail());
         users.put(user.getId(), user);

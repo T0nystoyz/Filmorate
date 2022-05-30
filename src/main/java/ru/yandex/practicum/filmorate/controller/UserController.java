@@ -21,10 +21,6 @@ public class UserController {
 
     @PostMapping(value = "/user")
     public User create(@Valid @RequestBody User user) {
-        /*if(user.getEmail() == null || user.getEmail().isBlank()) {
-            throw new InvalidEmailException("Адрес электронной почты не может быть пустым.");
-        }*/
-
         if (user.getLogin().contains(" ")) {
             throw new InvalidUserException("Логин не должен содержать пробелы");
         }
@@ -46,7 +42,7 @@ public class UserController {
     }
 
     @PutMapping(value = "/user")
-    public User put(@RequestBody User user) {
+    public User put(@Valid @RequestBody User user) {
         if(user.getId() == null) {
             throw new InvalidUserException("Id не должен быть пустым");
         }

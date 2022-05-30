@@ -13,17 +13,18 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/films")
 public class FilmController {
     private final LocalDate MIN_DATE = LocalDate.of(1895, 12, 28);
     private final Map<Long, Film> films = new HashMap<>();
     private long currentId = 0;
 
-    @GetMapping("/films")
+    @GetMapping
     public List<Film> findAll() {
         return new ArrayList<>(films.values());
     }
 
-    @PostMapping(value = "/film")
+    @PostMapping
     public Film create(@Valid @RequestBody Film film) {
         if (film.getReleaseDate().isBefore(MIN_DATE)) {
             throw new InvalidFilmException("Дата релиза не раньше 28 декабря 1895 года");
@@ -35,7 +36,7 @@ public class FilmController {
         return film;
     }
 
-    @PutMapping(value = "/film")
+    @PutMapping
     public Film put(@Valid @RequestBody Film film) {
         if(film.getId() == null) {
             throw new InvalidFilmException("Id не должен быть пустым");

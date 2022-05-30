@@ -9,17 +9,18 @@ import javax.validation.Valid;
 import java.util.*;
 
 @RestController
+@RequestMapping("/users")
 public class UserController {
     private final Map<Long, User> users = new HashMap<>();
     private final Set<String> emails = new HashSet<>();
     private long currentId = 0;
 
-    @GetMapping("/users")
+    @GetMapping
     public List<User> findAll() {
         return new ArrayList<>(users.values());
     }
 
-    @PostMapping(value = "/user")
+    @PostMapping
     public User create(@Valid @RequestBody User user) {
         if (user.getLogin().contains(" ")) {
             throw new InvalidUserException("Логин не должен содержать пробелы");
@@ -41,7 +42,7 @@ public class UserController {
         return user;
     }
 
-    @PutMapping(value = "/user")
+    @PutMapping
     public User put(@Valid @RequestBody User user) {
         if(user.getId() == null) {
             throw new InvalidUserException("Id не должен быть пустым");

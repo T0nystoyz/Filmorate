@@ -12,24 +12,18 @@ import java.util.*;
 @RestController
 @RequestMapping("/users")
 @Slf4j
-public class UserController {
-    private final static String MSG_ERR_LOGIN = "Логин не должен содержать пробелы ";
-    private final static String MSG_ERR_ID = "Некорректный id ";
-    private final Map<Long, User> users = new HashMap<>();
+public class UserController extends AbstractController<User> {
     private final Set<String> emails = new HashSet<>();
-    private long currentId = 0;
 
     @GetMapping
+    @Override
     public List<User> findAll() {
-        return new ArrayList<>(users.values());
+        return super.findAll();
     }
 
     @PostMapping
+    @Override
     public User create(@Valid @RequestBody User user) {
-        if (user.getLogin().contains(" ")) {
-            log.warn(MSG_ERR_LOGIN + user.getLogin());
-            throw new InvalidUserException(MSG_ERR_LOGIN);
-        }
         if (emails.contains(user.getEmail())) {
             String message = ("Пользователь с электронной почтой " +
                     user.getEmail() + " уже зарегистрирован.");
@@ -41,32 +35,24 @@ public class UserController {
             user.setName(user.getLogin());
         }
 
-        currentId++;
-        user.setId(currentId);
-        log.info("Добавление пользователя {}", user);
+        user = super.create(user);
         emails.add(user.getEmail());
-        users.put(user.getId(), user);
+        log.info("Добавлен пользователь {}", user);
 
         return user;
     }
 
     @PutMapping
+    @Override
     public User put(@Valid @RequestBody User user) {
-        if(user.getId() == null || user.getId() <= 0) {
-            log.warn(MSG_ERR_ID + user.getId());
-            throw new InvalidUserException(MSG_ERR_ID);
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
         }
 
-        if (user.getLogin().contains(" ")) {
-            log.warn(MSG_ERR_LOGIN + user.getLogin());
-            throw new InvalidUserException(MSG_ERR_LOGIN);
-        }
-
-        log.info("Обновление пользователя {}", user);
+        super.put(user);
         emails.add(user.getEmail());
-        users.put(user.getId(), user);
+        log.info("Обновлён пользователь {}", user);
 
         return user;
     }
-
 }

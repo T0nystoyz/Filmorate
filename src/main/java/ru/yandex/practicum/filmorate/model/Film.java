@@ -1,16 +1,17 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.Data;
-import org.springframework.lang.NonNull;
+import lombok.*;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
-@Data
-public class Film {
-    private Long id;
+@Getter
+@Setter
+@RequiredArgsConstructor
+@ToString
+public class Film extends StorageData {
     @NotBlank
     private String name;
     @NotBlank

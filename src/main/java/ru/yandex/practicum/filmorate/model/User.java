@@ -13,6 +13,7 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 @ToString
 public class User extends StorageData {
+    @NotBlank
     @Email
     private String email;
     @NotBlank

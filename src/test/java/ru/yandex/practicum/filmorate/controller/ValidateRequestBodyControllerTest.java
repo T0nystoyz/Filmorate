@@ -12,10 +12,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Arrays;
 import java.util.stream.Stream;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+//Валидации построена на аннотациях спринга, обычное тестирование контроллера тут не поможет
+//В методах контроллеров очень мало проверочного кода, так что тестировать его как раньше нет смысла
 
 @WebMvcTest
 @AutoConfigureMockMvc
@@ -54,8 +57,30 @@ class ValidateRequestBodyControllerTest {
                         "\"birthday\": \"2100-08-20\"}"),
                 //всё неправильно
                 Arguments.of("/users", "{\"login\": \"dol dol\", \"email\":\"mailmail.ru\"," +
-                        "\"birthday\": \"2200-08-20\"}")
+                        "\"birthday\": \"2200-08-20\"}"),
+
+                //фильмы
+                //без названия
+                Arguments.of("/films",  "{ \"description\": \"bad film1\"," +
+                        "\"releaseDate\": \"2000-10-15\",  \"duration\": 100}"),
+                //пусто
+                Arguments.of("/films",  ""),
+                //отрицательная продолжительность
+                Arguments.of("/films",  "{ \"name\": \"anti-film\",  \"description\": \"anti-universe\"," +
+                        "\"releaseDate\": \"1967-03-25\",  \"duration\": -100}"),
+                //невалидная дата
+                Arguments.of("/films",  "{ \"name\": \"no film\",  \"description\": \"no film test\"," +
+                        "\"releaseDate\": \"1895-12-27\",  \"duration\": 100}"),
+                //длинное описание
+                Arguments.of("/films",  "{"+ longFilm() + "}")
         );
+    }
+
+    private static String longFilm() {
+        char[] arr = new char[201];
+        Arrays.fill(arr, 'f');
+        return String.format("\"name\": \"fff\",  \"description\": \"%s\",", new String(arr)) +
+                "\"releaseDate\": \"2000-10-25\",  \"duration\": 100";
     }
 
     @DisplayName("Post Валидные данные код ответа 200")
@@ -74,14 +99,22 @@ class ValidateRequestBodyControllerTest {
                         "\"email\":\"mail4@mail.ru\", \"birthday\": \"1986-08-20\"}"),
                 //пустое имя
                 Arguments.of("/users", "{\"login\": \"dolore\", \"email\":\"mai33l@mail.ru\"," +
-                        "\"birthday\": \"1986-08-20\"}")
+                        "\"birthday\": \"1986-08-20\"}"),
+
+                //фильмы
+                Arguments.of("/films",  "{ \"name\": \"nisi eiusmod\",  \"description\": \"{}\"," +
+                        "\"releaseDate\": \"1967-03-25\",  \"duration\": 100}"),
+                //первый фильм граничное условие
+                Arguments.of("/films",  "{ \"name\": \"Roundhay Garden Scence\",  \"description\": \"first film!!!\"," +
+                        "\"releaseDate\": \"1895-12-28\",  \"duration\": 1}")
+
         );
     }
 
     @DisplayName("Put Невалидные данные код ответа 400")
     @MethodSource("test3MethodSource")
     @ParameterizedTest(name = "{index} {0} {1}")
-    public void test1_putInvalid_thenReturnsStatus400(String urlTemplate, String body) throws Exception {
+    public void test3_putInvalid_thenReturnsStatus400(String urlTemplate, String body) throws Exception {
         mvc.perform(MockMvcRequestBuilders.put(urlTemplate)
                         .content(body).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -90,10 +123,9 @@ class ValidateRequestBodyControllerTest {
     //Невалидные данные для put
     private static  Stream<Arguments> test3MethodSource() {
         return Stream.of(
-                Arguments.of("/users", "{\"login\": \"dol\", \"name\": \"Nick Name\"," +
-                        "\"email\":\"mail4@mail.ru\", \"birthday\": \"1986-08-20\"}"),
                 //почта не может быть пустой
-                Arguments.of("/users", "{ \"id\": 1,\"login\": \"dol\", \"name\": \"Dolly\", \"birthday\": \"1946-08-20\"}"),
+                Arguments.of("/users", "{ \"id\": 1,\"login\": \"dol\", \"name\": \"Dolly\"," +
+                        "\"birthday\": \"1946-08-20\"}"),
                 //почта без собаки
                 Arguments.of("/users", "{ \"id\": 1,\"login\": \"dol\", \"name\": \"Dolly\"," +
                         "\"email\":\"mailmail.ru\", \"birthday\": \"1946-08-20\"}"),
@@ -110,7 +142,22 @@ class ValidateRequestBodyControllerTest {
                         "\"birthday\": \"2100-08-20\"}"),
                 //всё неправильно
                 Arguments.of("/users", "{ \"id\": 1,\"login\": \"dol dol\", \"email\":\"mailmail.ru\"," +
-                        "\"birthday\": \"2200-08-20\"}")
+                        "\"birthday\": \"2200-08-20\"}"),
+
+                //Фильмы
+                //без названия
+                Arguments.of("/films",  "{ \"id\": 1, \"description\": \"bad film1\"," +
+                        "\"releaseDate\": \"2000-10-15\",  \"duration\": 100}"),
+                //пусто
+                Arguments.of("/films",  ""),
+                //отрицательная продолжительность
+                Arguments.of("/films",  "{ \"id\": 1, \"name\": \"anti-film\"," +
+                        "\"description\": \"anti-universe\", \"releaseDate\": \"1967-03-25\", \"duration\": -100}"),
+                //невалидная дата
+                Arguments.of("/films",  "{ \"id\": 1, \"name\": \"no film\"," +
+                        "\"description\": \"no film test\", \"releaseDate\": \"1895-12-27\", \"duration\": 100}"),
+                //длинное описание
+                Arguments.of("/films",  "{\"id\": 1," + longFilm() + "}")
         );
     }
 
@@ -133,6 +180,31 @@ class ValidateRequestBodyControllerTest {
         );
     }
 
+    @DisplayName("Put Невалидный ID код ответа 500")
+    @MethodSource("test5MethodSource")
+    @ParameterizedTest(name = "{index} {0} {1}")
+    public void test1_putInvalid_thenReturnsStatus400(String urlTemplate, String body) throws Exception {
+        mvc.perform(MockMvcRequestBuilders.put(urlTemplate)
+                        .content(body).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is5xxServerError());
+    }
 
+    //Невалидный id для put
+    private static  Stream<Arguments> test5MethodSource() {
+        return Stream.of(
+                //нет id
+                Arguments.of("/users", "{\"login\": \"dol\", \"name\": \"Nick Name\"," +
+                        "\"email\":\"mail4@mail.ru\", \"birthday\": \"1986-08-20\"}"),
+                //отрицательный id
+                Arguments.of("/users", "{ \"id\": -100,\"login\": \"dol\", \"name\": \"Dolly\"," +
+                        "\"email\":\"mail@mail.ru\", \"birthday\": \"1946-08-20\"}"),
 
+                //отрицательный id
+                Arguments.of("/films",  "{ \"id\": -100, \"name\": \"no film\",  \"description\": \"no film test\"," +
+                        "\"releaseDate\": \"2000-12-27\",  \"duration\": 100}"),
+                //нет id
+                Arguments.of("/films",  "{ \"name\": \"nisi eiusmod\",  \"description\": \"{}\"," +
+                        "\"releaseDate\": \"1967-03-25\",  \"duration\": 100}")
+        );
+    }
 }

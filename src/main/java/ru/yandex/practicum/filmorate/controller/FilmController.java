@@ -25,7 +25,6 @@ public class FilmController extends AbstractController<Film> {
     @PostMapping
     @Override
     public Film create(@Valid @RequestBody Film film) {
-        validateReleaseDate(film.getReleaseDate());
         film = super.create(film);
         log.info("Добавлен фильма {}", film);
 
@@ -35,7 +34,6 @@ public class FilmController extends AbstractController<Film> {
     @PutMapping
     @Override
     public Film put(@Valid @RequestBody Film film) {
-        validateReleaseDate(film.getReleaseDate());
         film = super.put(film);
         log.info("Обновлён фильм {}", film);
 
@@ -47,5 +45,16 @@ public class FilmController extends AbstractController<Film> {
             log.warn(MSG_ERR_DATE + date);
             throw new InvalidFilmException(MSG_ERR_DATE);
         }
+    }
+
+    @Override
+    protected void validationBeforeCreate(Film film) {
+        validateReleaseDate(film.getReleaseDate());
+    }
+
+    @Override
+    protected void validationBeforePut(Film film) {
+        super.validationBeforePut(film);
+        validateReleaseDate(film.getReleaseDate());
     }
 }

@@ -17,9 +17,6 @@ import java.util.stream.Stream;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-//Валидации построена на аннотациях спринга, обычное тестирование контроллера тут не поможет
-//В методах контроллеров очень мало проверочного кода, так что тестировать его как раньше нет смысла
-
 @WebMvcTest
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)

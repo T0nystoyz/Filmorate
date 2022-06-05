@@ -24,13 +24,6 @@ public class UserController extends AbstractController<User> {
     @PostMapping
     @Override
     public User create(@Valid @RequestBody User user) {
-        if (emails.contains(user.getEmail())) {
-            String message = ("Пользователь с электронной почтой " +
-                    user.getEmail() + " уже зарегистрирован.");
-            log.warn(message);
-            throw new UserAlreadyExistException(message);
-        }
-
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
@@ -55,4 +48,16 @@ public class UserController extends AbstractController<User> {
 
         return user;
     }
+
+    @Override
+    protected void validationBeforeCreate(User user) {
+        if (emails.contains(user.getEmail())) {
+            String message = ("Пользователь с электронной почтой " +
+                    user.getEmail() + " уже зарегистрирован.");
+            log.warn(message);
+            throw new UserAlreadyExistException(message);
+        }
+
+    }
+
 }

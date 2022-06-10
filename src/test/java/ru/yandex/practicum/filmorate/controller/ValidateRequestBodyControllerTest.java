@@ -180,7 +180,7 @@ class ValidateRequestBodyControllerTest {
     @DisplayName("Put Невалидный ID код ответа 500")
     @MethodSource("test5MethodSource")
     @ParameterizedTest(name = "{index} {0} {1}")
-    public void test1_putInvalid_thenReturnsStatus400(String urlTemplate, String body) throws Exception {
+    public void test5_putInvalid_thenReturnsStatus500(String urlTemplate, String body) throws Exception {
         mvc.perform(MockMvcRequestBuilders.put(urlTemplate)
                         .content(body).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is5xxServerError());

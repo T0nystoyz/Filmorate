@@ -4,12 +4,12 @@ import ru.yandex.practicum.filmorate.model.StorageData;
 
 import java.util.List;
 
-public interface CommonStorage <T extends StorageData> {
+public interface CommonStorage <E extends StorageData> {
 
-    public List<T> findAll();
+    public List<E> findAll();
 
-    public T create(T data);
+    public E create(E data);
 
-    public T update(T data);
+    public E update(E data);
 
 }

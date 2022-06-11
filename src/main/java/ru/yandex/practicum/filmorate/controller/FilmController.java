@@ -33,8 +33,8 @@ public class FilmController extends AbstractController<Film> {
 
     @PutMapping
     @Override
-    public Film put(@Valid @RequestBody Film film) {
-        film = super.put(film);
+    public Film update(@Valid @RequestBody Film film) {
+        film = super.update(film);
         log.info("Обновлён фильм {}", film);
 
         return film;

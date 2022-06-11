@@ -26,7 +26,7 @@ public abstract class AbstractController <T extends StorageData> {
         return  data;
     }
 
-    public T put(T data) {
+    public T update(T data) {
         validationBeforePut(data);
         storage.put(data.getId(), data);
         return data;

@@ -37,12 +37,12 @@ public class UserController extends AbstractController<User> {
 
     @PutMapping
     @Override
-    public User put(@Valid @RequestBody User user) {
+    public User update(@Valid @RequestBody User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
 
-        super.put(user);
+        super.update(user);
         emails.add(user.getEmail());
         log.info("Обновлён пользователь {}", user);
 

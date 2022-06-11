@@ -10,6 +10,6 @@ public interface CommonStorage <T extends StorageData> {
 
     public T create(T data);
 
-    public T put(T data);
+    public T update(T data);
 
 }

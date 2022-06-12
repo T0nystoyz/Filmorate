@@ -1,9 +1,12 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.InvalidFilmException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -12,9 +15,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/films")
 @Slf4j
-public class FilmController extends AbstractController<Film> {
+public class FilmController extends AbstractController<Film, FilmStorage, FilmService> {
     private final static String MSG_ERR_DATE = "Дата релиза не раньше 28 декабря 1895 года ";
     private final LocalDate MIN_DATE = LocalDate.of(1895, 12, 28);
+
+    @Autowired
+    public FilmController(FilmService service, FilmStorage storage) {
+        super(service, storage);
+    }
 
     @GetMapping
     @Override

@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.storage;
 
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 
-public class InMemoryUserStorage extends AbstractInMemoryStorage<User> {
+@Component
+public class InMemoryUserStorage extends AbstractInMemoryStorage<User> implements UserStorage {
 }

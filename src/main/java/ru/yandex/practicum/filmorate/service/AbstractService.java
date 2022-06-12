@@ -6,7 +6,7 @@ import ru.yandex.practicum.filmorate.storage.CommonStorage;
 
 import java.util.List;
 
-public abstract class AbstractService <E extends StorageData, T extends CommonStorage> {
+public class AbstractService <E extends StorageData, T extends CommonStorage> {
     private final T storage;
 
     @Autowired

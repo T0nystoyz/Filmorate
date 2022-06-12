@@ -4,6 +4,8 @@ import ru.yandex.practicum.filmorate.model.StorageData;
 
 import java.util.List;
 
+//Чтобы не повторяться
+
 public interface CommonStorage <E extends StorageData> {
 
     public List<E> findAll();

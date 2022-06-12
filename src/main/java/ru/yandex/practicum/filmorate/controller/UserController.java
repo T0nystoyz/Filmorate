@@ -16,9 +16,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/users")
-@Slf4j
 public class UserController extends AbstractController<User, UserStorage, UserService> {
-    private final Set<String> emails = new HashSet<>();
 
     @Autowired
     public UserController(UserService service, UserStorage storage) {
@@ -34,40 +32,12 @@ public class UserController extends AbstractController<User, UserStorage, UserSe
     @PostMapping
     @Override
     public User create(@Valid @RequestBody User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-
-        user = super.create(user);
-        emails.add(user.getEmail());
-        log.info("Добавлен пользователь {}", user);
-
-        return user;
+        return super.create(user);
     }
 
     @PutMapping
     @Override
     public User update(@Valid @RequestBody User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-
-        super.update(user);
-        emails.add(user.getEmail());
-        log.info("Обновлён пользователь {}", user);
-
-        return user;
+        return super.update(user);
     }
-
-    @Override
-    protected void validationBeforeCreate(User user) {
-        if (emails.contains(user.getEmail())) {
-            String message = ("Пользователь с электронной почтой " +
-                    user.getEmail() + " уже зарегистрирован.");
-            log.warn(message);
-            throw new UserAlreadyExistException(message);
-        }
-
-    }
-
 }

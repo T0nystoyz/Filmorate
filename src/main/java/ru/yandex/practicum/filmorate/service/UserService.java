@@ -6,6 +6,9 @@ import ru.yandex.practicum.filmorate.exception.UserAlreadyExistException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @Slf4j
 public class UserService extends AbstractService<User, UserStorage> {
@@ -34,5 +37,29 @@ public class UserService extends AbstractService<User, UserStorage> {
             throw new UserAlreadyExistException(message);
         }
     }
+
+    public void addFriend(Long id1, Long id2) {
+        super.validateId(id1);
+        super.validateId(id2);
+    }
+
+    public void removeFriend(Long id1, Long id2) {
+        super.validateId(id1);
+        super.validateId(id2);
+    }
+
+    public List<User> getFriends(Long id) {
+        super.validateId(id);
+        return new ArrayList<>();
+    }
+
+    public List<User> getCommonFriends(Long id1, long id2) {
+        super.validateId(id1);
+        super.validateId(id2);
+        return new ArrayList<>();
+    }
+
+
+
 
 }

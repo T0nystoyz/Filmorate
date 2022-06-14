@@ -36,8 +36,12 @@ public abstract class AbstractService <E extends StorageData, T extends CommonSt
     abstract protected void validationBeforeCreate(E data);
 
     protected void validationBeforeUpdate(E data) {
-        if (data.getId() == null || data.getId() <= 0) {
-            log.warn(MSG_ERR_ID + data.getId());
+        validateId(data.getId());
+    }
+
+    protected void validateId(Long id) {
+        if (id == null || id <= 0) {
+            log.warn(MSG_ERR_ID + id);
             throw new InvalidIdException(MSG_ERR_ID);
         }
     }

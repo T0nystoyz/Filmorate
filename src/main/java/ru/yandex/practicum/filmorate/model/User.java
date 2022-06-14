@@ -7,6 +7,10 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -22,4 +26,21 @@ public class User extends StorageData {
     private String name;
     @Past
     private LocalDate birthday;
+
+    @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
+    private final Set<Long> friends = new HashSet<>();
+
+    public void addFriend(Long id) {
+        friends.add(id);
+    }
+
+    public void removeFriend(Long id) {
+        friends.remove(id);
+    }
+
+    public List<Long> getFiends() {
+        return new ArrayList<>(friends);
+    }
+
+
 }

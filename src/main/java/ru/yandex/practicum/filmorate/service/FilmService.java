@@ -51,5 +51,4 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
             throw new InvalidFilmException(MSG_ERR_DATE);
         }
     }
-
 }

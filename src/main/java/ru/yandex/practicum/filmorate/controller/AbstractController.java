@@ -11,7 +11,7 @@ import java.util.List;
 
 public abstract class AbstractController <E extends StorageData, T extends
         CommonStorage<E>, S extends AbstractService<E, T>> {
-    private final S service;
+    protected final S service;
     private final T storage;
 
     @Autowired

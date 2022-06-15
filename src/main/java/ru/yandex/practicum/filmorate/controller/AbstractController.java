@@ -20,7 +20,10 @@ public abstract class AbstractController <E extends StorageData, T extends
         this.storage = storage;
     }
 
-    @Autowired
+    public E findById(Long id) {
+        return service.findById(id);
+    }
+
     public List<E> findAll() {
         return service.findAll();
     }

@@ -11,6 +11,11 @@ public abstract class AbstractInMemoryStorage<E extends StorageData> implements 
     private final Map<Long, E> storage = new HashMap<>();
     private long currentId = 0;
 
+    @Override
+    public E findById(Long id) {
+        return storage.get(id);
+    }
+
     public List<E> findAll() {
         return new ArrayList<>(storage.values());
     }

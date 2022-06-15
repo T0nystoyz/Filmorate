@@ -8,10 +8,11 @@ import java.util.List;
 
 public interface CommonStorage <E extends StorageData> {
 
-    public List<E> findAll();
+    E findById(Long id);
 
-    public E create(E data);
+    List<E> findAll();
 
-    public E update(E data);
+    E create(E data);
 
+    E update(E data);
 }

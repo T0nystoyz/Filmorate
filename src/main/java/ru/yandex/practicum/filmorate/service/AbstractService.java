@@ -9,7 +9,7 @@ import ru.yandex.practicum.filmorate.storage.CommonStorage;
 import java.util.List;
 
 @Slf4j
-public abstract class AbstractService <E extends StorageData, T extends CommonStorage> {
+public abstract class AbstractService <E extends StorageData, T extends CommonStorage<E>> {
     private final static String MSG_ERR_ID = "Некорректный id ";
 
     protected final T storage;
@@ -25,12 +25,12 @@ public abstract class AbstractService <E extends StorageData, T extends CommonSt
 
     public E create(E data) {
         validationBeforeCreate(data);
-        return (E) storage.create(data);
+        return storage.create(data);
     }
 
     public E update(E data) {
         validationBeforeUpdate(data);
-        return (E) storage.update(data);
+        return storage.update(data);
     }
 
     abstract protected void validationBeforeCreate(E data);
@@ -44,5 +44,10 @@ public abstract class AbstractService <E extends StorageData, T extends CommonSt
             log.warn(MSG_ERR_ID + id);
             throw new InvalidIdException(MSG_ERR_ID);
         }
+    }
+
+    public E findById(Long id) {
+        validateId(id);
+        return storage.findById(id);
     }
 }

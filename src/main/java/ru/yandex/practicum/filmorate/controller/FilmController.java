@@ -18,6 +18,12 @@ public class FilmController extends AbstractController<Film, FilmStorage, FilmSe
         super(service, storage);
     }
 
+    @GetMapping("/{id}")
+    @Override
+    public Film findById(@PathVariable  Long id) {
+        return super.findById(id);
+    }
+
     @GetMapping
     @Override
     public List<Film> findAll() {

@@ -55,9 +55,13 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
     }
 
     public void addLike(Long id, Long userId) {
+        super.validateId(id);
+        super.validateId(userId);
     }
 
     public void removeLike(Long id, Long userId) {
+        super.validateId(id);
+        super.validateId(userId);
     }
 
     public List<Film> findPopularMovies(int count) {

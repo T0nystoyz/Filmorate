@@ -47,6 +47,10 @@ public class UserService extends AbstractService<User, UserStorage> {
             log.warn(message);
             throw  new NotFoundException(message);
         }
+        user1.addFriend(id2);
+        user2.addFriend(id1);
+        super.update(user1);
+        super.update(user2);
     }
 
     public void removeFriend(Long id1, Long id2) {
@@ -57,6 +61,10 @@ public class UserService extends AbstractService<User, UserStorage> {
             log.warn(message);
             throw  new NotFoundException(message);
         }
+        user1.removeFriend(id2);
+        user2.removeFriend(id1);
+        super.update(user1);
+        super.update(user2);
     }
 
     public List<User> getFriends(Long id) {
@@ -66,7 +74,13 @@ public class UserService extends AbstractService<User, UserStorage> {
             log.warn(message);
             throw new NotFoundException(message);
         }
-        return new ArrayList<>();
+        List<Long> friendsId = user.getFiends();
+        List<User> friends = new ArrayList<>();
+        for (var friendId : friendsId) {
+            friends.add(super.findById(friendId));
+        }
+
+        return friends;
     }
 
     public List<User> getCommonFriends(Long id1, long id2) {
@@ -77,7 +91,16 @@ public class UserService extends AbstractService<User, UserStorage> {
             log.warn(message);
             throw  new NotFoundException(message);
         }
-        return new ArrayList<>();
+        List<Long> friendsId1 = user1.getFiends();
+        List<Long> friendsId2 = user2.getFiends();
+        friendsId1.retainAll(friendsId2);
+
+        List<User> friends = new ArrayList<>();
+        for (var friendId : friendsId1) {
+            friends.add(super.findById(friendId));
+        }
+
+        return friends;
     }
 
 

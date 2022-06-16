@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -76,15 +77,25 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
         Film film = super.findById(id);
         User user = userService.findById(userId);
         validateLike(film, user);
+        film.addLike(userId);
+        super.update(film);
     }
 
     public void removeLike(Long id, Long userId) {
         Film film = super.findById(id);
         User user = userService.findById(userId);
         validateLike(film, user);
+        film.removeLike(userId);
+        super.update(film);
     }
 
     public List<Film> findPopularMovies(int count) {
-        return new ArrayList<>();
+        List<Film> films = super.findAll();
+        films.sort(Comparator.comparing(Film::getLikesCount).reversed());
+        if(count > films.size()) {
+            count = films.size();
+        }
+
+        return new ArrayList<>(films.subList(0, count));
     }
 }

@@ -7,6 +7,8 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -50,5 +52,15 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
             log.warn(MSG_ERR_DATE + date);
             throw new InvalidFilmException(MSG_ERR_DATE);
         }
+    }
+
+    public void addLike(Long id, Long userId) {
+    }
+
+    public void removeLike(Long id, Long userId) {
+    }
+
+    public List<Film> findPopularMovies(int count) {
+        return new ArrayList<>();
     }
 }

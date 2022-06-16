@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -40,5 +41,20 @@ public class FilmController extends AbstractController<Film, FilmStorage, FilmSe
     @Override
     public Film update(@Valid @RequestBody Film film) {
         return super.update(film);
+    }
+
+    @PutMapping("/{id}/like/{userId}")
+    public void addLike(@PathVariable Long id, @PathVariable Long userId) {
+        service.addLike(id, userId);
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public void removeLike(@PathVariable Long id, @PathVariable Long userId) {
+        service.removeLike(id, userId);
+    }
+
+    @GetMapping("/popular")
+    public List<Film> findPopularMovies(@RequestParam(defaultValue = "10") int count) {
+        return service.findPopularMovies(count);
     }
 }

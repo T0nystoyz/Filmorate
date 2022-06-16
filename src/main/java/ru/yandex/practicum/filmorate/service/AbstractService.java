@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.yandex.practicum.filmorate.exception.InvalidIdException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.StorageData;
 import ru.yandex.practicum.filmorate.storage.CommonStorage;
 
@@ -11,6 +12,7 @@ import java.util.List;
 @Slf4j
 public abstract class AbstractService <E extends StorageData, T extends CommonStorage<E>> {
     private final static String MSG_ERR_ID = "Некорректный id ";
+    private final static String MSG_ERR_NOT_FOUND = "Не найдено по id ";
 
     protected final T storage;
 
@@ -40,9 +42,13 @@ public abstract class AbstractService <E extends StorageData, T extends CommonSt
     }
 
     protected void validateId(Long id) {
-        if (id == null || id <= 0) {
+        if (id == null) {
             log.warn(MSG_ERR_ID + id);
-            throw new InvalidIdException(MSG_ERR_ID);
+            throw new InvalidIdException(MSG_ERR_ID  + id);
+        }
+        if (id < 0) {
+            log.warn(MSG_ERR_NOT_FOUND + id);
+            throw new NotFoundException(MSG_ERR_NOT_FOUND + id);
         }
     }
 

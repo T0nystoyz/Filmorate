@@ -1,13 +1,13 @@
 package ru.yandex.practicum.filmorate.storage;
 
-import ru.yandex.practicum.filmorate.model.StorageData;
+import ru.yandex.practicum.filmorate.model.AbstractEntity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractInMemoryStorage<E extends StorageData> implements CommonStorage<E> {
+public abstract class AbstractInMemoryStorage<E extends AbstractEntity> implements CommonStorage<E> {
     private final Map<Long, E> storage = new HashMap<>();
     private long currentId = 0;
 

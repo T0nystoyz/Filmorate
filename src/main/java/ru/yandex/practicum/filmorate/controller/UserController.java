@@ -20,8 +20,8 @@ import java.util.*;
 public class UserController extends AbstractController<User, UserStorage, UserService> {
 
     @Autowired
-    public UserController(UserService service, UserStorage storage) {
-        super(service, storage);
+    public UserController(UserService service) {
+        super(service);
     }
 
     @GetMapping("/{id}")

@@ -1,23 +1,19 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import ru.yandex.practicum.filmorate.exception.InvalidIdException;
-import ru.yandex.practicum.filmorate.model.StorageData;
+import ru.yandex.practicum.filmorate.model.AbstractEntity;
 import ru.yandex.practicum.filmorate.service.AbstractService;
 import ru.yandex.practicum.filmorate.storage.CommonStorage;
 
 import java.util.List;
 
-public abstract class AbstractController <E extends StorageData, T extends
+public abstract class AbstractController <E extends AbstractEntity, T extends
         CommonStorage<E>, S extends AbstractService<E, T>> {
     protected final S service;
-    private final T storage;
 
     @Autowired
-    public AbstractController(S service, T storage) {
+    public AbstractController(S service) {
         this.service = service;
-        this.storage = storage;
     }
 
     public E findById(Long id) {
@@ -35,5 +31,4 @@ public abstract class AbstractController <E extends StorageData, T extends
     public E update(E data) {
         return service.update(data);
     }
-
 }

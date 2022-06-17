@@ -13,7 +13,7 @@ import java.util.Set;
 @Setter
 @RequiredArgsConstructor
 @ToString
-public class Film extends StorageData {
+public class Film extends AbstractEntity {
     @NotBlank
     private String name;
     @NotBlank

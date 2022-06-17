@@ -16,7 +16,7 @@ import java.util.Set;
 @Setter
 @RequiredArgsConstructor
 @ToString
-public class User extends StorageData {
+public class User extends AbstractEntity {
     @NotBlank
     @Email
     private String email;

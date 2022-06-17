@@ -5,6 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public abstract class StorageData {
+public abstract class AbstractEntity {
     private Long id;
 }

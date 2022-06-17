@@ -7,7 +7,6 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -16,7 +15,7 @@ public class FilmController extends AbstractController<Film, FilmStorage, FilmSe
 
     @Autowired
     public FilmController(FilmService service, FilmStorage storage) {
-        super(service, storage);
+        super(service);
     }
 
     @GetMapping("/{id}")

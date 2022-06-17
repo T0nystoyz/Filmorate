@@ -4,13 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.yandex.practicum.filmorate.exception.InvalidIdException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.model.StorageData;
+import ru.yandex.practicum.filmorate.model.AbstractEntity;
 import ru.yandex.practicum.filmorate.storage.CommonStorage;
 
 import java.util.List;
 
 @Slf4j
-public abstract class AbstractService <E extends StorageData, T extends CommonStorage<E>> {
+public abstract class AbstractService <E extends AbstractEntity, T extends CommonStorage<E>> {
     private final static String MSG_ERR_ID = "Некорректный id ";
     private final static String MSG_ERR_NOT_FOUND = "Не найдено по id ";
 

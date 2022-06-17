@@ -1,12 +1,12 @@
 package ru.yandex.practicum.filmorate.storage;
 
-import ru.yandex.practicum.filmorate.model.StorageData;
+import ru.yandex.practicum.filmorate.model.AbstractEntity;
 
 import java.util.List;
 
 //Чтобы не повторяться
 
-public interface CommonStorage <E extends StorageData> {
+public interface CommonStorage <E extends AbstractEntity> {
 
     E findById(Long id);
 

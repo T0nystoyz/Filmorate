@@ -13,7 +13,7 @@ import java.util.List;
 public class FilmController extends AbstractController<Film, FilmStorage, FilmService> {
 
     @Autowired
-    public FilmController(FilmService service, FilmStorage storage) {
+    public FilmController(FilmService service) {
         super(service);
     }
 

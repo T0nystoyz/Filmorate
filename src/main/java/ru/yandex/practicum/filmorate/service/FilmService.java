@@ -43,13 +43,13 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
 
     //Шаблонный метод
     @Override
-    protected void validationBeforeCreate(Film film) {
+    public void validationBeforeCreate(Film film) {
         validateReleaseDate(film.getReleaseDate());
     }
 
     //Шаблонный метод
     @Override
-    protected void validationBeforeUpdate(Film film) {
+    public void validationBeforeUpdate(Film film) {
         super.validationBeforeUpdate(film);
         validateReleaseDate(film.getReleaseDate());
     }

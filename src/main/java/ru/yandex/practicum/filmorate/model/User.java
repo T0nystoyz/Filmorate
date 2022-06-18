@@ -41,6 +41,4 @@ public class User extends AbstractEntity {
     public List<Long> getFiends() {
         return new ArrayList<>(friends);
     }
-
-
 }

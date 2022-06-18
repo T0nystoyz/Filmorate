@@ -4,14 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.*;
 
 //Переписал, чтобы меньше кода была наследниках
 @RestController
 @RequestMapping("/users")
-public class UserController extends AbstractController<User, UserStorage, UserService> {
+public class UserController extends AbstractController<User, UserService> {
 
     @Autowired
     public UserController(UserService service) {

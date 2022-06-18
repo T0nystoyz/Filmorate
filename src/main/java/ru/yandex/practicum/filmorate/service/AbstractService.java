@@ -10,7 +10,8 @@ import ru.yandex.practicum.filmorate.storage.CommonStorage;
 import java.util.List;
 
 @Slf4j
-public abstract class AbstractService <E extends AbstractEntity, T extends CommonStorage<E>> {
+public abstract class AbstractService <E extends AbstractEntity, T extends CommonStorage<E>>
+        implements CommonService<E> {
     private final static String MSG_ERR_ID = "Некорректный id ";
     private final static String MSG_ERR_NOT_FOUND = "Не найдено по id ";
 
@@ -21,27 +22,33 @@ public abstract class AbstractService <E extends AbstractEntity, T extends Commo
         this.storage = storage;
     }
 
+    @Override
     public List<E> findAll() {
         return storage.findAll();
     }
 
+    @Override
     public E create(E data) {
         validationBeforeCreate(data);
         return storage.create(data);
     }
 
+    @Override
     public E update(E data) {
         validationBeforeUpdate(data);
         return storage.update(data);
     }
 
-    abstract protected void validationBeforeCreate(E data);
+    @Override
+    abstract public void validationBeforeCreate(E data);
 
-    protected void validationBeforeUpdate(E data) {
+    @Override
+    public void validationBeforeUpdate(E data) {
         validateId(data.getId());
     }
 
-    protected void validateId(Long id) {
+    @Override
+    public void validateId(Long id) {
         if (id == null) {
             log.warn(MSG_ERR_ID + id);
             throw new InvalidIdException(MSG_ERR_ID  + id);
@@ -52,6 +59,7 @@ public abstract class AbstractService <E extends AbstractEntity, T extends Commo
         }
     }
 
+    @Override
     public E findById(Long id) {
         validateId(id);
         return storage.findById(id);

@@ -16,15 +16,19 @@ public abstract class AbstractInMemoryStorage<E extends AbstractEntity> implemen
         return storage.get(id);
     }
 
+    @Override
     public List<E> findAll() {
         return new ArrayList<>(storage.values());
     }
+
+    @Override
     public E create(E data) {
         data.setId(++currentId);
         storage.put(data.getId(), data);
         return  data;
     }
 
+    @Override
     public E update(E data) {
         storage.put(data.getId(), data);
         return data;

@@ -17,6 +17,7 @@ public class UserService extends AbstractService<User, UserStorage> {
         super(storage);
     }
 
+    @Override
     public User create(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
@@ -30,7 +31,7 @@ public class UserService extends AbstractService<User, UserStorage> {
 
     //Шаблонный метод
     @Override
-    protected void validationBeforeCreate(User user) {
+    public void validationBeforeCreate(User user) {
         if (super.storage.containsEmail(user.getEmail())) {
             String message = ("Пользователь с электронной почтой " +
                     user.getEmail() + " уже зарегистрирован.");

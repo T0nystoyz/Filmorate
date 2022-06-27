@@ -1,63 +1,39 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-//import ru.yandex.practicum.filmorate.exception.InvalidUserException;
-import ru.yandex.practicum.filmorate.exception.UserAlreadyExistException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
-import javax.validation.Valid;
 import java.util.*;
 
+//Переписал, чтобы меньше кода была наследниках
 @RestController
 @RequestMapping("/users")
-@Slf4j
-public class UserController extends AbstractController<User> {
-    private final Set<String> emails = new HashSet<>();
+public class UserController extends AbstractController<User, UserService> {
 
-    @GetMapping
-    @Override
-    public List<User> findAll() {
-        return super.findAll();
+    @Autowired
+    public UserController(UserService service) {
+        super(service);
     }
 
-    @PostMapping
-    @Override
-    public User create(@Valid @RequestBody User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-
-        user = super.create(user);
-        emails.add(user.getEmail());
-        log.info("Добавлен пользователь {}", user);
-
-        return user;
+    @PutMapping("/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable("id") Long id1, @PathVariable("friendId") Long id2) {
+        service.addFriend(id1, id2);
     }
 
-    @PutMapping
-    @Override
-    public User put(@Valid @RequestBody User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-
-        super.put(user);
-        emails.add(user.getEmail());
-        log.info("Обновлён пользователь {}", user);
-
-        return user;
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public void removeFriend(@PathVariable("id") Long id1, @PathVariable("friendId") Long id2) {
+        service.removeFriend(id1, id2);
     }
 
-    @Override
-    protected void validationBeforeCreate(User user) {
-        if (emails.contains(user.getEmail())) {
-            String message = ("Пользователь с электронной почтой " +
-                    user.getEmail() + " уже зарегистрирован.");
-            log.warn(message);
-            throw new UserAlreadyExistException(message);
-        }
-
+    @GetMapping("/{id}/friends")
+    public List<User> getFriends(@PathVariable  Long id) {
+        return service.getFriends(id);
     }
 
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<User> getCommonFriends(@PathVariable("id") Long id1, @PathVariable("otherId") long id2) {
+        return service.getCommonFriends(id1, id2);
+    }
 }

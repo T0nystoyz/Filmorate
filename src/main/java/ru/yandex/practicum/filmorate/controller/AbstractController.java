@@ -1,43 +1,38 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import lombok.extern.slf4j.Slf4j;
-import ru.yandex.practicum.filmorate.exception.InvalidIdException;
-import ru.yandex.practicum.filmorate.model.StorageData;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.AbstractEntity;
+import ru.yandex.practicum.filmorate.service.CommonService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import javax.validation.Valid;
 import java.util.List;
-import java.util.Map;
 
-@Slf4j
-public abstract class AbstractController <T extends StorageData> {
-    private final static String MSG_ERR_ID = "Некорректный id ";
-    private final Map<Long, T> storage = new HashMap<>();
-    private long currentId = 0;
+public abstract class AbstractController <E extends AbstractEntity, S extends CommonService<E>> {
+    protected final S service;
 
-    public List<T> findAll() {
-        return new ArrayList<>(storage.values());
-    }
-    public T create(T data) {
-        validationBeforeCreate(data);
-        data.setId(++currentId);
-        storage.put(data.getId(), data);
-
-        return  data;
+    @Autowired
+    public AbstractController(S service) {
+        this.service = service;
     }
 
-    public T put(T data) {
-        validationBeforePut(data);
-        storage.put(data.getId(), data);
-        return data;
+    @GetMapping("/{id}")
+    public E findById(@PathVariable Long id) {
+        return service.findById(id);
     }
 
-    abstract protected void validationBeforeCreate(T data);
+    @GetMapping
+    public List<E> findAll() {
+        return service.findAll();
+    }
 
-    protected void validationBeforePut(T data) {
-        if (data.getId() == null || data.getId() <= 0) {
-            log.warn(MSG_ERR_ID + data.getId());
-            throw new InvalidIdException(MSG_ERR_ID);
-        }
+    @PostMapping
+    public E create(@Valid @RequestBody E data) {
+        return service.create(data);
+    }
+
+    @PutMapping
+    public E update(@Valid @RequestBody E data) {
+        return service.update(data);
     }
 }

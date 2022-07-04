@@ -13,8 +13,7 @@ import java.util.List;
 @Component
 @Primary
 public class FilmDbStorage implements FilmStorage {
-    private final static String GET_FILM_BY_ID = "SELECT * FROM film WHERE film_id = ?";
-   private final JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
    @Autowired
    public FilmDbStorage(JdbcTemplate jdbcTemplate) {
@@ -22,7 +21,7 @@ public class FilmDbStorage implements FilmStorage {
     }
     @Override
     public Film findById(Long id) {
-        SqlRowSet filmRows = jdbcTemplate.queryForRowSet(GET_FILM_BY_ID, id);
+        SqlRowSet userRows = jdbcTemplate.queryForRowSet("SELECT * FROM film WHERE film_id = ?", id);
         Film film = new Film();
         film.setId(id);
         return film;

@@ -22,6 +22,8 @@ public class Film extends AbstractEntity {
     private LocalDate releaseDate;
     @Min(1)
     private int duration;
+    @Min(1)
+    private Long ratingID;
 
     @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
     private final Set<Long> likes = new HashSet<>();

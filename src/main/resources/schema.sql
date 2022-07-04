@@ -60,3 +60,14 @@ CREATE TABLE IF NOT EXISTS "film_genre" (
 	CONSTRAINT "fk_film_genre_film_id" FOREIGN KEY("film_id") REFERENCES "film" ("film_id"),
 	CONSTRAINT "fk_film_genre_genre_id" FOREIGN KEY("genre_id") REFERENCES "genre" ("genre_id")
 );
+
+/*INSERT INTO PUBLIC."rating"
+("rating_id", "name")
+VALUES(1, 'ttt');
+
+
+INSERT INTO PUBLIC."film"
+("film_id", "name", "description", "release_date", "duration", "rating_id")
+VALUES(1, '', '',  CURRENT_DATE(), 0, 0);
+
+*/

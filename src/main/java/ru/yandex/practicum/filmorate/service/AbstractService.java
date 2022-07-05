@@ -62,6 +62,12 @@ public abstract class AbstractService <E extends AbstractEntity, T extends Commo
     @Override
     public E findById(Long id) {
         validateId(id);
-        return storage.findById(id);
+        E data = storage.findById(id);
+        if (data == null) {
+            log.warn(MSG_ERR_NOT_FOUND + id);
+            throw new NotFoundException(MSG_ERR_NOT_FOUND + id);
+        }
+
+        return data;
     }
 }

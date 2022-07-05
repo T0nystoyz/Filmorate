@@ -40,32 +40,32 @@ public class UserService extends AbstractService<User, UserStorage> {
         }
     }
 
-    public void addFriend(Long id1, Long id2) {
-        User user1 = super.findById(id1);
-        User user2 = super.findById(id2);
-        if (user1 == null || user2 == null) {
+    public void addFriend(Long id, Long friendId) {
+        User user = super.findById(id);
+        User friend = super.findById(friendId);
+        if (user == null || friend == null) {
             String message = ("Пользователь не найден");
             log.warn(message);
             throw  new NotFoundException(message);
         }
-        user1.addFriend(id2);
-        user2.addFriend(id1);
-        super.update(user1);
-        super.update(user2);
+        user.addFriend(friendId);
+        //friend.addFriend(id);
+        super.update(user);
+        //super.update(friend);
     }
 
-    public void removeFriend(Long id1, Long id2) {
-        User user1 = super.findById(id1);
-        User user2 = super.findById(id2);
-        if (user1 == null || user2 == null) {
+    public void removeFriend(Long id, Long friendId) {
+        User user = super.findById(id);
+        User friend = super.findById(friendId);
+        if (user == null || friend == null) {
             String message = ("Пользователь не найден");
             log.warn(message);
             throw  new NotFoundException(message);
         }
-        user1.removeFriend(id2);
-        user2.removeFriend(id1);
-        super.update(user1);
-        super.update(user2);
+        user.removeFriend(friendId);
+        //friend.removeFriend(id);
+        super.update(user);
+       // super.update(friend);
     }
 
     public List<User> getFriends(Long id) {

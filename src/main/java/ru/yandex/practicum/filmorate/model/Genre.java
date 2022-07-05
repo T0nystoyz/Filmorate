@@ -11,7 +11,6 @@ import javax.validation.constraints.Size;
 @Setter
 @ToString
 public class Genre extends AbstractEntity{
-    @NotBlank
     @Size(max = 30)
     private String name;
 }

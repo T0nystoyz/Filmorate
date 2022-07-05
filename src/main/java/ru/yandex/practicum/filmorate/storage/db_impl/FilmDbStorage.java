@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Rating;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.util.List;
@@ -34,7 +35,9 @@ public class FilmDbStorage implements FilmStorage {
         film.setDescription(filmRows.getString("DESCRIPTION"));
         film.setReleaseDate(filmRows.getDate("RELEASE_DATE").toLocalDate());
         film.setDuration(filmRows.getInt("DURATION"));
-        film.setRatingID(filmRows.getLong("RATING_ID"));
+        Rating rating = new Rating();
+        rating.setId(filmRows.getLong("RATING_ID"));
+        film.setMpa(rating);
         //Todo ID Жанров
         return film;
     }

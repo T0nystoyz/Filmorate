@@ -6,7 +6,7 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
 
-@Component("userDbStorage")
+@Component
 public class UserDbStorage implements UserStorage {
     @Override
     public User findById(Long id) {

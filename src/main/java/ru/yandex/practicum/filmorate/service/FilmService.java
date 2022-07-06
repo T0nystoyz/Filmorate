@@ -51,7 +51,6 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
     public void validationBeforeCreate(Film film) {
         validateReleaseDate(film.getReleaseDate());
         validateMpa(film.getMpa());
-        validateGenres(film.getGenres());
     }
 
     //Шаблонный метод
@@ -60,7 +59,6 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
         super.validationBeforeUpdate(film);
         validateReleaseDate(film.getReleaseDate());
         validateMpa(film.getMpa());
-        validateGenres(film.getGenres());
     }
 
     private void validateReleaseDate(LocalDate date) {

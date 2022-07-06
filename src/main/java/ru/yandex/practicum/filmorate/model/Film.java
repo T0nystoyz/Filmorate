@@ -25,7 +25,7 @@ public class Film extends AbstractEntity {
     @Min(1)
     private int duration;
     private Rating mpa;
-    private List<Genre> genres;
+    private Set<Genre> genres;
 
     @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
     private final Set<Long> likes = new HashSet<>();

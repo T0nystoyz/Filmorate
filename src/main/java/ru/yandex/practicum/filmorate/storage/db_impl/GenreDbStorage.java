@@ -1,6 +1,9 @@
 package ru.yandex.practicum.filmorate.storage.db_impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.GenreStorage;
 
@@ -8,9 +11,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+@Component
+@Primary
 public class GenreDbStorage implements GenreStorage {
     private final JdbcTemplate jdbcTemplate;
 
+    @Autowired
     public GenreDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
@@ -27,14 +33,15 @@ public class GenreDbStorage implements GenreStorage {
 
     private Genre mapToGenre(ResultSet resultSet, int rowNum) throws SQLException {
         Genre genre = new Genre();
-        genre.setId(resultSet.getLong("id"));
-        genre.setName(resultSet.getString("name"));
+        genre.setId(resultSet.getLong("GENRE_ID"));
+        genre.setName(resultSet.getString("NAME"));
         return genre;
     }
 
     @Override
     public List<Genre> findAll() {
-        return null;
+        String sql = "SELECT * FROM GENRES";
+        return jdbcTemplate.query(sql, this::mapToGenre);
     }
 
     @Override

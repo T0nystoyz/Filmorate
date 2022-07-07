@@ -45,12 +45,16 @@ public class GenreDbStorage implements GenreStorage {
     }
 
     @Override
-    public Genre create(Genre data) {
-        return null;
+    public Genre create(Genre genre) {
+        String sql = "INSERT INTO GENRES (NAME) VALUES(?)";
+        jdbcTemplate.update(sql, genre.getName());
+        return genre;
     }
 
     @Override
-    public Genre update(Genre data) {
-        return null;
+    public Genre update(Genre genre) {
+        String sql = "UPDATE GENRES SET NAME = ? WHERE GENRE_ID = ?";
+        jdbcTemplate.update(sql, genre.getName(), genre.getId());
+        return genre;
     }
 }

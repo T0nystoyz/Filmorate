@@ -12,7 +12,7 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.util.List;
 
-@Component
+//@Component
 //@Primary
 @Slf4j
 public class FilmDbStorage implements FilmStorage {

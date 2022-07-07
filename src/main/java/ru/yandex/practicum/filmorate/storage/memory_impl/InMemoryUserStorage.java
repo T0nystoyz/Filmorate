@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Component
-@Primary
 public class InMemoryUserStorage extends AbstractInMemoryStorage<User> implements UserStorage {
     private final Set<String> emails = new HashSet<>();
 

@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Set;
 
 @Component
-@Primary
 public class InMemoryFilmStorage extends AbstractInMemoryStorage<Film> implements FilmStorage {
 
     private RatingStorage ratingStorage;

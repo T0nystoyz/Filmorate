@@ -3,13 +3,16 @@ package ru.yandex.practicum.filmorate.storage.db_impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.GenreStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 @Primary
@@ -46,8 +49,14 @@ public class GenreDbStorage implements GenreStorage {
 
     @Override
     public Genre create(Genre genre) {
-        String sql = "INSERT INTO GENRES (NAME) VALUES(?)";
-        jdbcTemplate.update(sql, genre.getName());
+        SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("GENRES")
+                .usingGeneratedKeyColumns("GENRE_ID");
+
+        Map<String, Object> values = new HashMap<>();
+        values.put("NAME", genre.getName());
+
+        genre.setId(simpleJdbcInsert.executeAndReturnKey(values).longValue());
         return genre;
     }
 

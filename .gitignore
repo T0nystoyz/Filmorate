@@ -7,6 +7,8 @@
 *.zip
 *.tar.gz
 *.rar
+*.mv.db
+*.trace.db
 hs_err_pid*
 out/
 target/

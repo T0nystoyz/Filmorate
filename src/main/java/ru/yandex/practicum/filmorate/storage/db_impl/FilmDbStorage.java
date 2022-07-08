@@ -7,24 +7,35 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Rating;
+import ru.yandex.practicum.filmorate.storage.FilmGenreStorage;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.GenreStorage;
+import ru.yandex.practicum.filmorate.storage.RatingStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Component
 @Primary
 @Slf4j
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
+    private final RatingStorage ratingStorage;
+    private final FilmGenreStorage filmGenreStorage;
+
     @Autowired
-    public FilmDbStorage(JdbcTemplate jdbcTemplate) {
+    public FilmDbStorage(JdbcTemplate jdbcTemplate, RatingStorage ratingStorage, FilmGenreStorage filmGenreStorage) {
         this.jdbcTemplate = jdbcTemplate;
+        this.ratingStorage = ratingStorage;
+        this.filmGenreStorage = filmGenreStorage;
     }
+
     @Override
 
     public Film findById(Long id) {
@@ -45,8 +56,8 @@ public class FilmDbStorage implements FilmStorage {
         film.setDuration(resultSet.getInt("DURATION"));
         Rating rating = new Rating();
         rating.setId(resultSet.getLong("RATING_ID"));
-        film.setMpa(rating);
-        //Todo ID Жанров
+        film.setMpa(ratingStorage.findById(rating.getId()));
+        film.setGenres(filmGenreStorage.getGenresByFilm(film));
         return film;
     }
 
@@ -63,15 +74,17 @@ public class FilmDbStorage implements FilmStorage {
                 .usingGeneratedKeyColumns("FILM_ID");
 
         Map<String, Object> values = new HashMap<>();
-        values.put("FILM_ID", film.getId());
+        //values.put("FILM_ID", film.getId());
         values.put("NAME", film.getName());
         values.put("DESCRIPTION", film.getDescription());
         values.put("RELEASE_DATE", film.getReleaseDate());
         values.put("DURATION", film.getDuration());
         values.put("RATING_ID", film.getMpa().getId());
-        //Todo ID Жанров
 
         film.setId(simpleJdbcInsert.executeAndReturnKey(values).longValue());
+        filmGenreStorage.createGenresByFilm(film);
+        film.setMpa(ratingStorage.findById(film.getMpa().getId()));
+
         return film;
     }
 
@@ -81,6 +94,9 @@ public class FilmDbStorage implements FilmStorage {
                 "WHERE FILM_ID = ?";
         jdbcTemplate.update(sql, film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(),
                 film.getMpa().getId(), film.getId());
+        filmGenreStorage.updateGenresByFilm(film);
+        film.setMpa(ratingStorage.findById(film.getMpa().getId()));
+
         return film;
     }
 }

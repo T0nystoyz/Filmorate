@@ -83,7 +83,8 @@ public class FilmDbStorage implements FilmStorage {
 
         film.setId(simpleJdbcInsert.executeAndReturnKey(values).longValue());
         filmGenreStorage.createGenresByFilm(film);
-        film.setMpa(ratingStorage.findById(film.getMpa().getId()));
+        //решил выключить заполнение названий рейтингов
+        //film.setMpa(ratingStorage.findById(film.getMpa().getId()));
 
         return film;
     }
@@ -95,7 +96,8 @@ public class FilmDbStorage implements FilmStorage {
         jdbcTemplate.update(sql, film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(),
                 film.getMpa().getId(), film.getId());
         filmGenreStorage.updateGenresByFilm(film);
-        film.setMpa(ratingStorage.findById(film.getMpa().getId()));
+        //решил выключить заполнение названий рейтингов
+        //film.setMpa(ratingStorage.findById(film.getMpa().getId()));
 
         return film;
     }

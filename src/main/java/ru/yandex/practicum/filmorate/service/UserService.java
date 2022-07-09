@@ -48,6 +48,10 @@ public class UserService extends AbstractService<User, UserStorage> {
             log.warn(message);
             throw  new NotFoundException(message);
         }
+        if (user.containsFriend(friendId)) {
+            log.warn("Друг существует");
+            return;
+        }
         user.addFriend(friendId);
         //friend.addFriend(id);
         super.update(user);
@@ -61,6 +65,10 @@ public class UserService extends AbstractService<User, UserStorage> {
             String message = ("Пользователь не найден");
             log.warn(message);
             throw  new NotFoundException(message);
+        }
+        if (!user.containsFriend(friendId)) {
+            log.warn("Друг не существует");
+            return;
         }
         user.removeFriend(friendId);
         //friend.removeFriend(id);

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
@@ -56,8 +57,10 @@ public class FilmDbStorage implements FilmStorage {
         film.setDuration(resultSet.getInt("DURATION"));
         Rating rating = new Rating();
         rating.setId(resultSet.getLong("RATING_ID"));
+        loadLikes(film);
         film.setMpa(ratingStorage.findById(rating.getId()));
         film.setGenres(filmGenreStorage.getGenresByFilm(film));
+
         return film;
     }
 
@@ -82,6 +85,7 @@ public class FilmDbStorage implements FilmStorage {
         values.put("RATING_ID", film.getMpa().getId());
 
         film.setId(simpleJdbcInsert.executeAndReturnKey(values).longValue());
+        saveLikes(film);
         filmGenreStorage.createGenresByFilm(film);
         //решил выключить заполнение названий рейтингов
         //film.setMpa(ratingStorage.findById(film.getMpa().getId()));
@@ -95,10 +99,29 @@ public class FilmDbStorage implements FilmStorage {
                 "WHERE FILM_ID = ?";
         jdbcTemplate.update(sql, film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(),
                 film.getMpa().getId(), film.getId());
+        saveLikes(film);
         filmGenreStorage.updateGenresByFilm(film);
         //решил выключить заполнение названий рейтингов
         //film.setMpa(ratingStorage.findById(film.getMpa().getId()));
 
         return film;
+    }
+
+    private void saveLikes(Film film) {
+        jdbcTemplate.update("DELETE FROM FILMS_LIKES WHERE FILM_ID = ?", film.getId());
+
+        String sql = "INSERT INTO FILMS_LIKES (FILM_ID, USER_ID) VALUES(?, ?)";
+        Set<Long> likes = film.getLikes();
+        for (var like : likes ) {
+            jdbcTemplate.update(sql, film.getId(), like);
+        }
+    }
+
+    private void loadLikes(Film film) {
+        String sql = "SELECT USER_ID FROM FILMS_LIKES WHERE FILM_ID = ?";
+        SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql, film.getId());
+        while (sqlRowSet.next()) {
+            film.addLike(sqlRowSet.getLong("USER_ID"));
+        }
     }
 }

@@ -41,4 +41,8 @@ public class Film extends AbstractEntity {
     public int getLikesCount() {
         return likes.size();
     }
+
+    public Set<Long> getLikes() {
+        return new HashSet<>(likes);
+    }
 }

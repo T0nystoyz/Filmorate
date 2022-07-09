@@ -42,7 +42,11 @@ public class UserDbStorage implements UserStorage {
         user.setLogin(resultSet.getString("LOGIN"));
         user.setName(resultSet.getString("NAME"));
         user.setBirthday(resultSet.getDate("BIRTHDAY").toLocalDate());
+        loadFrieds(user);
         return user;
+    }
+
+    private void loadFrieds(User user) {
     }
 
     @Override
@@ -80,5 +84,44 @@ public class UserDbStorage implements UserStorage {
         String sql = "SELECT * FROM USERS WHERE EMAIL = ?";
         SqlRowSet filmRows = jdbcTemplate.queryForRowSet(sql, email);
         return filmRows.next();
+    }
+
+    @Override
+    public void addFriend(Long id, Long friendId) {
+        //Сервис не должен позволять добавлять друзей повторно
+        if (containsLink(friendId, id, false)) {
+            //friendId уже добавил ранее в друзья            
+            updateLink(friendId, id, true, friendId, id);
+        } else if (!containsLink(id, friendId, null)){
+            //Односторонняя связь, не было дружбы
+            insertLink(id, friendId);
+        }
+    }
+
+    @Override
+    public void removeFriend(Long id, Long friendId) {        
+        if (containsLink(id, friendId, false)) {
+            //Односторонняя связь. friendId не одобрял 
+            romoveLink(id, friendId);
+        } else if (containsLink(id, friendId, true)) {
+            //Совместная связь
+            updateLink(friendId, id, false, id, friendId);
+        } else if (containsLink(friendId, id, true)) {
+            //Совместная связь. friendId первый добавил
+            updateLink(friendId, id, false, friendId, id);
+        }
+    }
+   
+    private boolean containsLink(Long filterId1, Long filterId2, Boolean filterConfirmed) {
+        return false;
+    }
+
+    private void updateLink(Long id1, Long id2, boolean confirmed,  Long filterId1, Long filterId2) {
+    }
+
+    private void insertLink(Long id, Long friendId) {
+    }
+
+    private void romoveLink(Long filterId1, Long filterId2) {
     }
 }

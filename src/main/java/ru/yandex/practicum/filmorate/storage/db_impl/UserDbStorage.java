@@ -47,6 +47,16 @@ public class UserDbStorage implements UserStorage {
     }
 
     private void loadFriends(User user) {
+        String sql = "SELECT USER_ID2 FROM FRIENDSHIP  WHERE USER_ID1 = ?";
+        SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql, user.getId());
+        while (sqlRowSet.next()) {
+            user.addFriend(sqlRowSet.getLong("USER_ID2"));
+        }
+        sql = "SELECT USER_ID1 FROM FRIENDSHIP  WHERE USER_ID2 = ? AND  CONFIRMED = true";
+        sqlRowSet = jdbcTemplate.queryForRowSet(sql, user.getId());
+        while (sqlRowSet.next()) {
+            user.addFriend(sqlRowSet.getLong("USER_ID1"));
+        }
     }
 
     @Override
@@ -99,10 +109,10 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public void removeFriend(Long id, Long friendId) {        
+    public void removeFriend(Long id, Long friendId) {
         if (containsLink(id, friendId, false)) {
             //Односторонняя связь. friendId не одобрял 
-            romoveLink(id, friendId);
+            removeLink(id, friendId);
         } else if (containsLink(id, friendId, true)) {
             //Совместная связь
             updateLink(friendId, id, false, id, friendId);
@@ -113,15 +123,24 @@ public class UserDbStorage implements UserStorage {
     }
    
     private boolean containsLink(Long filterId1, Long filterId2, Boolean filterConfirmed) {
-        return false;
+        String sql = "SELECT * FROM FRIENDSHIP WHERE USER_ID1 = ? AND USER_ID2 = ? AND  CONFIRMED = ?";
+        SqlRowSet rows = jdbcTemplate.queryForRowSet(sql, filterId1, filterId2, filterConfirmed);
+        return rows.next();
     }
 
     private void updateLink(Long id1, Long id2, boolean confirmed,  Long filterId1, Long filterId2) {
+        String sql = "UPDATE FRIENDSHIP SET USER_ID1 = ?, USER_ID2 = ?, CONFIRMED = ? " +
+                "WHERE USER_ID1 = ? AND USER_ID2 = ?";
+        jdbcTemplate.update(sql, id1, id2, confirmed, filterId1, filterId2);
     }
 
     private void insertLink(Long id, Long friendId) {
+        String sql = "INSERT INTO FRIENDSHIP (USER_ID1, USER_ID2, CONFIRMED) VALUES(?, ?, ?)";
+        jdbcTemplate.update(sql, id, friendId, false);
     }
 
-    private void romoveLink(Long filterId1, Long filterId2) {
+    private void removeLink(Long filterId1, Long filterId2) {
+        String sql = "DELETE FROM FRIENDSHIP WHERE USER_ID1 = ? AND USER_ID2 = ?";
+        jdbcTemplate.update(sql, filterId1, filterId2);
     }
 }

@@ -54,9 +54,7 @@ public class UserService extends AbstractService<User, UserStorage> {
         }
         user.addFriend(friendId);
         storage.addFriend(id, friendId);
-        //friend.addFriend(id);
         super.update(user);
-        //super.update(friend);
     }
 
     public void removeFriend(Long id, Long friendId) {
@@ -73,9 +71,7 @@ public class UserService extends AbstractService<User, UserStorage> {
         }
         user.removeFriend(friendId);
         storage.removeFriend(id, friendId);
-        //friend.removeFriend(id);
         super.update(user);
-       // super.update(friend);
     }
 
     public List<User> getFriends(Long id) {
@@ -113,8 +109,4 @@ public class UserService extends AbstractService<User, UserStorage> {
 
         return friends;
     }
-
-
-
-
 }

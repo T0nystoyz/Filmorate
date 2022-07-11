@@ -75,14 +75,6 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
         }
     }
 
-
-    private void validateGenres (List<Genre> genres) {
-        if (genres == null) {
-            log.warn(MSG_ERR_GENRES);
-            throw new InvalidFilmException(MSG_ERR_GENRES);
-        }
-    }
-
     private void validateLike(Film film, User user) {
         if (film == null) {
             String message = ("Фильм не найден");

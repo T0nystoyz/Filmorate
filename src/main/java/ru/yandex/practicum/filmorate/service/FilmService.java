@@ -35,6 +35,8 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
     @Override
     public Film create(Film film) {
         film = super.create(film);
+        storage.saveLikes(film);
+        storage.createGenresByFilm(film);
         log.info("Добавлен фильма {}", film);
         return film;
     }
@@ -42,6 +44,8 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
     @Override
     public Film update(Film film) {
         film = super.update(film);
+        storage.saveLikes(film);
+        storage.updateGenresByFilm(film);
         log.info("Обновлён фильм {}", film);
         return film;
     }
@@ -93,7 +97,7 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
         User user = userService.findById(userId);
         validateLike(film, user);
         film.addLike(userId);
-        super.update(film);
+        storage.saveLikes(film);
     }
 
     public void removeLike(Long id, Long userId) {
@@ -101,7 +105,7 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
         User user = userService.findById(userId);
         validateLike(film, user);
         film.removeLike(userId);
-        super.update(film);
+        storage.saveLikes(film);
     }
 
     public List<Film> findPopularMovies(int count) {

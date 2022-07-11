@@ -77,11 +77,6 @@ public class FilmDbStorage implements FilmStorage {
         values.put("RATING_ID", film.getMpa().getId());
 
         film.setId(simpleJdbcInsert.executeAndReturnKey(values).longValue());
-        saveLikes(film);
-        createGenresByFilm(film);
-        //решил выключить заполнение названий рейтингов
-        //film.setMpa(ratingStorage.findById(film.getMpa().getId()));
-
         return film;
     }
 
@@ -91,15 +86,12 @@ public class FilmDbStorage implements FilmStorage {
                 "WHERE FILM_ID = ?";
         jdbcTemplate.update(sql, film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(),
                 film.getMpa().getId(), film.getId());
-        saveLikes(film);
-        updateGenresByFilm(film);
-        //решил выключить заполнение названий рейтингов
-        //film.setMpa(ratingStorage.findById(film.getMpa().getId()));
 
         return film;
     }
 
-    private void saveLikes(Film film) {
+    @Override
+    public void saveLikes(Film film) {
         jdbcTemplate.update("DELETE FROM FILMS_LIKES WHERE FILM_ID = ?", film.getId());
 
         String sql = "INSERT INTO FILMS_LIKES (FILM_ID, USER_ID) VALUES(?, ?)";
@@ -109,7 +101,8 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    private void loadLikes(Film film) {
+    @Override
+    public void loadLikes(Film film) {
         String sql = "SELECT USER_ID FROM FILMS_LIKES WHERE FILM_ID = ?";
         SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql, film.getId());
         while (sqlRowSet.next()) {
@@ -117,7 +110,8 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    private Set<Genre> getGenresByFilm(Film film) {
+    @Override
+    public Set<Genre> getGenresByFilm(Film film) {
         String sql = "SELECT g.GENRE_ID, g.NAME FROM GENRES g NATURAL JOIN FILMS_GENRES fg WHERE fg.FILM_ID = ?";
         return new HashSet<>(jdbcTemplate.query(sql, this::mapToGenre, film.getId()));
     }
@@ -129,7 +123,8 @@ public class FilmDbStorage implements FilmStorage {
         return genre;
     }
 
-    private void createGenresByFilm(Film film) {
+    @Override
+    public void createGenresByFilm(Film film) {
         String sql = "INSERT INTO FILMS_GENRES (FILM_ID, GENRE_ID) VALUES(?, ?)";
         Set<Genre> genres = film.getGenres();
         if (genres == null) {
@@ -140,7 +135,7 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    private void updateGenresByFilm(Film film) {
+    @Override public void updateGenresByFilm(Film film) {
         String sql = "DELETE FROM FILMS_GENRES WHERE FILM_ID = ?";
         jdbcTemplate.update(sql, film.getId());
         createGenresByFilm(film);

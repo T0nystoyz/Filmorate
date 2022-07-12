@@ -1,11 +1,9 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Getter
@@ -14,4 +12,18 @@ import javax.validation.constraints.Size;
 public class Genre extends AbstractEntity{
     @Size(max = 30)
     private String name;
+
+    public Genre(Long id, String name) {
+        super(id);
+        this.name = name;
+    }
+
+    public Genre(Long id) {
+        super(id);
+        this.name = "";
+    }
+
+    public Genre() {
+        this.name = "";
+    }
 }

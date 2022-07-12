@@ -33,7 +33,10 @@ public class FilmDbStorage implements FilmStorage {
     @Override
 
     public Film findById(Long id) {
-        String sql = "SELECT * FROM FILMS WHERE FILM_ID = ?";
+        String sql =
+                "SELECT f.FILM_ID, f.NAME, f.DESCRIPTION, f.RELEASE_DATE, f.DURATION, f.RATING_ID, r.NAME R_NAME " +
+                "FROM FILMS f JOIN RATINGS r ON f.RATING_ID = r.RATING_ID " +
+                "WHERE f.FILM_ID = ?";
         List<Film> result = jdbcTemplate.query(sql, this::mapToFilm, id);
         if (result.isEmpty()) {
             return null;
@@ -48,18 +51,17 @@ public class FilmDbStorage implements FilmStorage {
         film.setDescription(resultSet.getString("DESCRIPTION"));
         film.setReleaseDate(resultSet.getDate("RELEASE_DATE").toLocalDate());
         film.setDuration(resultSet.getInt("DURATION"));
-        Rating rating = new Rating();
-        rating.setId(resultSet.getLong("RATING_ID"));
-        loadLikes(film);
-        film.setMpa(ratingStorage.findById(rating.getId()));
-        film.setGenres(getGenresByFilm(film));
+        film.setMpa(new Rating(resultSet.getLong("RATING_ID"), resultSet.getString("R_NAME")));
 
+        film.setGenres(getGenresByFilm(film)); //лучше из таблицы жанров в модель на сервисе загружать или в стороже можно
+        loadLikes(film);
         return film;
     }
 
     @Override
     public List<Film> findAll() {
-        String sql = "SELECT * FROM FILMS ORDER BY FILM_ID";
+        String sql = "SELECT f.FILM_ID, f.NAME, f.DESCRIPTION, f.RELEASE_DATE, f.DURATION, f.RATING_ID, r.NAME R_NAME " +
+                "FROM FILMS f JOIN RATINGS r ON f.RATING_ID = r.RATING_ID ORDER BY f.FILM_ID";
         return jdbcTemplate.query(sql, this::mapToFilm);
     }
 
@@ -139,5 +141,4 @@ public class FilmDbStorage implements FilmStorage {
         String sql = "DELETE FROM FILMS_GENRES WHERE FILM_ID = ?";
         jdbcTemplate.update(sql, film.getId());
         createGenresByFilm(film);
-    }
-}
+    }}

@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.InvalidFilmException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Rating;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
@@ -21,7 +20,6 @@ import java.util.List;
 public class FilmService extends AbstractService<Film, FilmStorage> {
     private final static String MSG_ERR_DATE = "Дата релиза не раньше 28 декабря 1895 года ";
     private final static String MSG_ERR_MPA = "Не заполнен рейтинг MPA";
-    private final static String MSG_ERR_GENRES = "Не заполнен список жанров";
 
     private final LocalDate MIN_DATE = LocalDate.of(1895, 12, 28);
     private final UserService userService;
@@ -35,7 +33,6 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
     @Override
     public Film create(Film film) {
         film = super.create(film);
-        storage.saveLikes(film);
         storage.createGenresByFilm(film);
         log.info("Добавлен фильма {}", film);
         return film;
@@ -44,10 +41,28 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
     @Override
     public Film update(Film film) {
         film = super.update(film);
-        storage.saveLikes(film);
         storage.updateGenresByFilm(film);
         log.info("Обновлён фильм {}", film);
         return film;
+    }
+
+    @Override
+    public List<Film> findAll() {
+        List<Film> films = super.findAll();
+        films.forEach(this::loadData);
+        return films;
+    }
+
+    @Override
+    public Film findById(Long id) {
+        Film film = super.findById(id);
+        loadData(film);
+        return film;
+    }
+
+    private void loadData(Film film) {
+        film.setGenres(storage.getGenresByFilm(film));
+        storage.loadLikes(film);
     }
 
     //Шаблонный метод
@@ -93,7 +108,7 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
     }
 
     public void addLike(Long id, Long userId) {
-        Film film = super.findById(id);
+        Film film = this.findById(id);
         User user = userService.findById(userId);
         validateLike(film, user);
         film.addLike(userId);
@@ -101,7 +116,7 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
     }
 
     public void removeLike(Long id, Long userId) {
-        Film film = super.findById(id);
+        Film film = this.findById(id);
         User user = userService.findById(userId);
         validateLike(film, user);
         film.removeLike(userId);
@@ -109,7 +124,7 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
     }
 
     public List<Film> findPopularMovies(int count) {
-        List<Film> films = super.findAll();
+        List<Film> films = this.findAll();
         films.sort(Comparator.comparing(Film::getLikesCount).reversed());
         if(count > films.size()) {
             count = films.size();

@@ -11,7 +11,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Rating;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.RatingStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,12 +21,10 @@ import java.util.*;
 @Slf4j
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
-    private final RatingStorage ratingStorage;
 
     @Autowired
-    public FilmDbStorage(JdbcTemplate jdbcTemplate, RatingStorage ratingStorage) {
+    public FilmDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        this.ratingStorage = ratingStorage;
     }
 
     @Override
@@ -52,9 +49,6 @@ public class FilmDbStorage implements FilmStorage {
         film.setReleaseDate(resultSet.getDate("RELEASE_DATE").toLocalDate());
         film.setDuration(resultSet.getInt("DURATION"));
         film.setMpa(new Rating(resultSet.getLong("RATING_ID"), resultSet.getString("R_NAME")));
-
-        film.setGenres(getGenresByFilm(film)); //лучше из таблицы жанров в модель на сервисе загружать или в стороже можно
-        loadLikes(film);
         return film;
     }
 
@@ -141,4 +135,5 @@ public class FilmDbStorage implements FilmStorage {
         String sql = "DELETE FROM FILMS_GENRES WHERE FILM_ID = ?";
         jdbcTemplate.update(sql, film.getId());
         createGenresByFilm(film);
-    }}
+    }
+}

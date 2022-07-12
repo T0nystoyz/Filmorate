@@ -45,6 +45,4 @@ public class User extends AbstractEntity {
     public boolean containsFriend(Long id){
         return friends.contains(id);
     }
-
-
 }

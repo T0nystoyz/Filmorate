@@ -7,7 +7,11 @@ import ru.yandex.practicum.filmorate.model.User;
 public interface UserStorage extends CommonStorage<User> {
     boolean containsEmail(String email);
 
-    void addFriend(Long id, Long friendId);
+    boolean containsLink(Long filterId1, Long filterId2, Boolean filterConfirmed);
 
-    void removeFriend(Long id, Long friendId);
+    void updateLink(Long id1, Long id2, boolean confirmed,  Long filterId1, Long filterId2);
+
+    void insertLink(Long id, Long friendId);
+
+    void removeLink(Long filterId1, Long filterId2);
 }

@@ -53,7 +53,14 @@ public class UserService extends AbstractService<User, UserStorage> {
             return;
         }
         user.addFriend(friendId);
-        storage.addFriend(id, friendId);
+
+        if (storage.containsLink(friendId, id, false)) {
+            //friendId уже добавил ранее в друзья
+            storage.updateLink(friendId, id, true, friendId, id);
+        } else if (!storage.containsLink(id, friendId, null)){
+            //Односторонняя связь, не было дружбы
+            storage.insertLink(id, friendId);
+        }
         super.update(user);
     }
 
@@ -70,7 +77,17 @@ public class UserService extends AbstractService<User, UserStorage> {
             return;
         }
         user.removeFriend(friendId);
-        storage.removeFriend(id, friendId);
+
+        if (storage.containsLink(id, friendId, false)) {
+            //Односторонняя связь. friendId не одобрял
+            storage.removeLink(id, friendId);
+        } else if (storage.containsLink(id, friendId, true)) {
+            //Совместная связь
+            storage.updateLink(friendId, id, false, id, friendId);
+        } else if (storage.containsLink(friendId, id, true)) {
+            //Совместная связь. friendId первый добавил
+            storage.updateLink(friendId, id, false, friendId, id);
+        }
         super.update(user);
     }
 

@@ -29,6 +29,20 @@ public class UserService extends AbstractService<User, UserStorage> {
         return user;
     }
 
+    @Override
+    public List<User> findAll() {
+        List<User> users = super.findAll();
+        users.forEach(storage::loadFriends);
+        return users;
+    }
+
+    @Override
+    public User findById(Long id) {
+        User user = super.findById(id);
+        storage.loadFriends(user);
+        return user;
+    }
+
     //Шаблонный метод
     @Override
     public void validationBeforeCreate(User user) {
@@ -41,8 +55,8 @@ public class UserService extends AbstractService<User, UserStorage> {
     }
 
     public void addFriend(Long id, Long friendId) {
-        User user = super.findById(id);
-        User friend = super.findById(friendId);
+        User user = this.findById(id);
+        User friend = this.findById(friendId);
         if (user == null || friend == null) {
             String message = ("Пользователь не найден");
             log.warn(message);
@@ -61,12 +75,11 @@ public class UserService extends AbstractService<User, UserStorage> {
             //Односторонняя связь, не было дружбы
             storage.insertFriendship(id, friendId);
         }
-        super.update(user);
     }
 
     public void removeFriend(Long id, Long friendId) {
-        User user = super.findById(id);
-        User friend = super.findById(friendId);
+        User user = this.findById(id);
+        User friend = this.findById(friendId);
         if (user == null || friend == null) {
             String message = ("Пользователь не найден");
             log.warn(message);
@@ -88,11 +101,10 @@ public class UserService extends AbstractService<User, UserStorage> {
             //Совместная связь. friendId первый добавил
             storage.updateFriendship(friendId, id, false, friendId, id);
         }
-        super.update(user);
     }
 
     public List<User> getFriends(Long id) {
-        User user = super.findById(id);
+        User user = this.findById(id);
         if (user == null) {
             String message = ("Пользователь не найден");
             log.warn(message);
@@ -101,15 +113,15 @@ public class UserService extends AbstractService<User, UserStorage> {
         List<Long> friendsId = user.getFiends();
         List<User> friends = new ArrayList<>();
         for (var friendId : friendsId) {
-            friends.add(super.findById(friendId));
+            friends.add(this.findById(friendId));
         }
 
         return friends;
     }
 
     public List<User> getCommonFriends(Long id1, long id2) {
-        User user1 = super.findById(id1);
-        User user2 = super.findById(id2);
+        User user1 = this.findById(id1);
+        User user2 = this.findById(id2);
         if (user1 == null || user2 == null) {
             String message = ("Пользователь не найден");
             log.warn(message);
@@ -121,7 +133,7 @@ public class UserService extends AbstractService<User, UserStorage> {
 
         List<User> friends = new ArrayList<>();
         for (var friendId : friendsId1) {
-            friends.add(super.findById(friendId));
+            friends.add(this.findById(friendId));
         }
 
         return friends;

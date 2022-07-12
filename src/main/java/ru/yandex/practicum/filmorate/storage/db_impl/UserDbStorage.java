@@ -42,7 +42,6 @@ public class UserDbStorage implements UserStorage {
         user.setLogin(resultSet.getString("LOGIN"));
         user.setName(resultSet.getString("NAME"));
         user.setBirthday(resultSet.getDate("BIRTHDAY").toLocalDate());
-        loadFriends(user);
         return user;
     }
 

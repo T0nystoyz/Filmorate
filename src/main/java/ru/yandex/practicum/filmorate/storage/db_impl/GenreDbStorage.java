@@ -5,14 +5,13 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.GenreStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @Primary
@@ -66,4 +65,11 @@ public class GenreDbStorage implements GenreStorage {
         jdbcTemplate.update(sql, genre.getName(), genre.getId());
         return genre;
     }
+
+    @Override
+    public Set<Genre> getGenresByFilm(Film film) {
+        String sql = "SELECT g.GENRE_ID, g.NAME FROM GENRES g NATURAL JOIN FILMS_GENRES fg WHERE fg.FILM_ID = ?";
+        return new HashSet<>(jdbcTemplate.query(sql, this::mapToGenre, film.getId()));
+    }
+
 }

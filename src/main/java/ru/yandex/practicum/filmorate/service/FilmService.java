@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Rating;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.GenreStorage;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -23,11 +24,13 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
 
     private final LocalDate MIN_DATE = LocalDate.of(1895, 12, 28);
     private final UserService userService;
+    private final GenreStorage genreStorage;
 
     @Autowired
-    public FilmService(FilmStorage storage, UserService userService) {
+    public FilmService(FilmStorage storage, UserService userService, GenreStorage genreStorage) {
         super(storage);
         this.userService = userService;
+        this.genreStorage = genreStorage;
     }
 
     @Override
@@ -61,7 +64,7 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
     }
 
     private void loadData(Film film) {
-        film.setGenres(storage.getGenresByFilm(film));
+        film.setGenres(genreStorage.getGenresByFilm(film));
         storage.loadLikes(film);
     }
 

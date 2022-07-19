@@ -108,18 +108,6 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    @Override
-    public Set<Genre> getGenresByFilm(Film film) {
-        String sql = "SELECT g.GENRE_ID, g.NAME FROM GENRES g NATURAL JOIN FILMS_GENRES fg WHERE fg.FILM_ID = ?";
-        return new HashSet<>(jdbcTemplate.query(sql, this::mapToGenre, film.getId()));
-    }
-
-    private Genre mapToGenre(ResultSet resultSet, int rowNum) throws SQLException {
-        Genre genre = new Genre();
-        genre.setId(resultSet.getLong("GENRE_ID"));
-        genre.setName(resultSet.getString("NAME"));
-        return genre;
-    }
 
     @Override
     public void createGenresByFilm(Film film) {

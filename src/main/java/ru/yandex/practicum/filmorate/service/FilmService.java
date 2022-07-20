@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.model.Rating;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.GenreStorage;
+import ru.yandex.practicum.filmorate.storage.db_impl.FilmDbStorage;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -126,13 +127,28 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
         storage.saveLikes(film);
     }
 
-    public List<Film> findPopularMovies(int count) {
-        List<Film> films = this.findAll();
+    public List<Film> findPopularMovies(int count, int genreId, int year) {
+        List<Film> films = new ArrayList<>();
+        if(genreId == 0 && year == 0) {
+            films = this.findAll();
+        } else if(genreId == 0 && year != 0) {
+            //селект по всем жанрам и по конкретному году
+            films = storage.findAllByYear(year);
+            films.forEach(this::loadData);
+        } else if(genreId != 0 && year == 0) {
+            //селект по конкретному жанру и по всем годам
+            films = storage.findAllByGenre(genreId);
+            films.forEach(this::loadData);
+        } else {
+            //селект по конкретному жанру и по конкрутному году
+            films = storage.findAllByGenreAndYear(genreId, year);
+            films.forEach(this::loadData);
+        }
         films.sort(Comparator.comparing(Film::getLikesCount).reversed());
         if(count > films.size()) {
             count = films.size();
         }
-
         return new ArrayList<>(films.subList(0, count));
     }
+
 }

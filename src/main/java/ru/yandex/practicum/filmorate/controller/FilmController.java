@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
+
 import java.util.List;
 
 @RestController
@@ -29,5 +30,10 @@ public class FilmController extends AbstractController<Film, FilmService> {
     @GetMapping("/popular")
     public List<Film> findPopularMovies(@RequestParam(defaultValue = "10") int count) {
         return service.findPopularMovies(count);
+    }
+
+    @GetMapping("/common")
+    public List<Film> getCommonMovies(@RequestParam Long userId, @RequestParam Long friendId) {
+        return service.commonMovies(userId, friendId);
     }
 }

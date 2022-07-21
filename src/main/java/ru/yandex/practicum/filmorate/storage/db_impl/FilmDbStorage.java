@@ -32,8 +32,8 @@ public class FilmDbStorage implements FilmStorage {
     public Film findById(Long id) {
         String sql =
                 "SELECT f.FILM_ID, f.NAME, f.DESCRIPTION, f.RELEASE_DATE, f.DURATION, f.RATING_ID, r.NAME R_NAME " +
-                "FROM FILMS f JOIN RATINGS r ON f.RATING_ID = r.RATING_ID " +
-                "WHERE f.FILM_ID = ?";
+                        "FROM FILMS f JOIN RATINGS r ON f.RATING_ID = r.RATING_ID " +
+                        "WHERE f.FILM_ID = ?";
         List<Film> result = jdbcTemplate.query(sql, this::mapToFilm, id);
         if (result.isEmpty()) {
             return null;
@@ -56,7 +56,7 @@ public class FilmDbStorage implements FilmStorage {
     public List<Film> findAll() {
         String sql =
                 "SELECT f.FILM_ID, f.NAME, f.DESCRIPTION, f.RELEASE_DATE, f.DURATION, f.RATING_ID, r.NAME R_NAME " +
-                "FROM FILMS f JOIN RATINGS r ON f.RATING_ID = r.RATING_ID ORDER BY f.FILM_ID";
+                        "FROM FILMS f JOIN RATINGS r ON f.RATING_ID = r.RATING_ID ORDER BY f.FILM_ID";
         return jdbcTemplate.query(sql, this::mapToFilm);
     }
 
@@ -81,7 +81,7 @@ public class FilmDbStorage implements FilmStorage {
     public Film update(Film film) {
         String sql =
                 "UPDATE FILMS SET NAME = ?, DESCRIPTION = ?, RELEASE_DATE = ?, DURATION = ?, RATING_ID = ? " +
-                "WHERE FILM_ID = ?";
+                        "WHERE FILM_ID = ?";
         jdbcTemplate.update(sql, film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(),
                 film.getMpa().getId(), film.getId());
 
@@ -125,5 +125,20 @@ public class FilmDbStorage implements FilmStorage {
         String sql = "DELETE FROM FILMS_GENRES WHERE FILM_ID = ?";
         jdbcTemplate.update(sql, film.getId());
         createGenresByFilm(film);
+    }
+
+    @Override
+    public List<Film> commonMovies (Long userId, Long friendId) {
+        String sql =
+                "SELECT f.FILM_ID, f.NAME, f.DESCRIPTION, f.RELEASE_DATE, f.DURATION, f.RATING_ID, r.NAME R_NAME " +
+                        "FROM FILMS_LIKES fl1 JOIN FILMS_LIKES fl2 ON " +
+                        "fl1.FILM_ID  = fl2.FILM_ID " +
+                        "AND fl1.USER_ID  != fl2.USER_ID " +
+                        "AND fl1.USER_ID = ? " +
+                        "AND fl2.USER_ID = ? " +
+                        "JOIN FILMS f ON fl1.FILM_ID = f.FILM_ID " +
+                        "JOIN RATINGS r ON f.RATING_ID = r.RATING_ID ORDER BY f.FILM_ID";
+
+        return  jdbcTemplate.query(sql, this::mapToFilm, userId, friendId);
     }
 }

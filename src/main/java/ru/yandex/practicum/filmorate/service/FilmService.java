@@ -129,13 +129,13 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
 
     public List<Film> findPopularMovies(int count, int genreId, int year) {
         List<Film> films = new ArrayList<>();
-        if(genreId == 0 && year == 0) {
+        if (genreId == 0 && year == 0) {
             films = this.findAll();
-        } else if(genreId == 0 && year != 0) {
+        } else if (genreId == 0 && year != 0) {
             //селект по всем жанрам и по конкретному году
             films = storage.findAllByYear(year);
             films.forEach(this::loadData);
-        } else if(genreId != 0 && year == 0) {
+        } else if (genreId != 0 && year == 0) {
             //селект по конкретному жанру и по всем годам
             films = storage.findAllByGenre(genreId);
             films.forEach(this::loadData);
@@ -145,7 +145,7 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
             films.forEach(this::loadData);
         }
         films.sort(Comparator.comparing(Film::getLikesCount).reversed());
-        if(count > films.size()) {
+        if (count > films.size()) {
             count = films.size();
         }
         return new ArrayList<>(films.subList(0, count));

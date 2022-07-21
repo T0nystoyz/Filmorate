@@ -138,7 +138,8 @@ public class FilmDbStorage implements FilmStorage {
                         "AND fl2.USER_ID = ? " +
                         "JOIN FILMS f ON fl1.FILM_ID = f.FILM_ID " +
                         "JOIN RATINGS r ON f.RATING_ID = r.RATING_ID ORDER BY f.FILM_ID";
-
-        return  jdbcTemplate.query(sql, this::mapToFilm, userId, friendId);
+        List<Film> films = jdbcTemplate.query(sql, this::mapToFilm, userId, friendId);
+        films.sort(Comparator.comparing(Film::getLikesCount).reversed());
+        return films;
     }
 }

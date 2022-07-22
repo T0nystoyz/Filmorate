@@ -60,6 +60,31 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(sql, this::mapToFilm);
     }
 
+    public List<Film> findAllByYear(int year) {
+        String sql =
+                "SELECT f.FILM_ID, f.NAME, f.DESCRIPTION, f.RELEASE_DATE, f.DURATION, f.RATING_ID, r.NAME R_NAME " +
+                "FROM FILMS f JOIN RATINGS r ON f.RATING_ID = r.RATING_ID " +
+                "WHERE YEAR(f.RELEASE_DATE) = ? ORDER BY f.FILM_ID";
+        return jdbcTemplate.query(sql, this::mapToFilm, year);
+    }
+
+    public List<Film> findAllByGenre(int genreId) {
+        String sql =
+                "SELECT f.FILM_ID, f.NAME, f.DESCRIPTION, f.RELEASE_DATE, f.DURATION, f.RATING_ID, r.NAME R_NAME " +
+                "FROM FILMS f JOIN RATINGS r ON f.RATING_ID = r.RATING_ID " +
+                "WHERE f.FILM_ID IN (SELECT FILMS_GENRES.FILM_ID FROM FILMS_GENRES WHERE GENRE_ID = ?) ORDER BY f.FILM_ID";
+        return jdbcTemplate.query(sql, this::mapToFilm, genreId);
+    }
+
+    public List<Film> findAllByGenreAndYear(int genreId, int year) {
+        String sql =
+                "SELECT f.FILM_ID, f.NAME, f.DESCRIPTION, f.RELEASE_DATE, f.DURATION, f.RATING_ID, r.NAME R_NAME " +
+                "FROM FILMS f JOIN RATINGS r ON f.RATING_ID = r.RATING_ID " +
+                "WHERE f.FILM_ID IN (SELECT FILMS_GENRES.FILM_ID FROM FILMS_GENRES WHERE GENRE_ID = ?) " +
+                        "AND YEAR(f.RELEASE_DATE) = ? ORDER BY f.FILM_ID";
+        return jdbcTemplate.query(sql, this::mapToFilm, genreId, year);
+    }
+
     @Override
     public Film create(Film film) {
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)

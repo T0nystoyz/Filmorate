@@ -39,4 +39,9 @@ public class FilmController extends AbstractController<Film, FilmService> {
     public List<Film> getCommonMovies(@RequestParam Long userId, @RequestParam Long friendId) {
         return service.commonMovies(userId, friendId);
     }
+
+    @GetMapping("/director/{directorId}")
+    public List<Film> findFilmsByDirector(@PathVariable Long directorId, @RequestParam String sortBy) {
+        return service.findFilmsByDirector(directorId, sortBy);
+    }
 }

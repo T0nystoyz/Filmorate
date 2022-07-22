@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Rating;
@@ -171,5 +172,56 @@ public class FilmDbStorage implements FilmStorage {
                         "JOIN RATINGS r ON f.RATING_ID = r.RATING_ID ORDER BY f.FILM_ID";
         List<Film> films = jdbcTemplate.query(sql, this::mapToFilm, userId, friendId);
         return films;
+    }
+
+    @Override
+    public void updateDirectorsByFilm(Film film) {
+        String sql = "DELETE FROM films_directors WHERE film_id = ?";
+        jdbcTemplate.update(sql, film.getId());
+        createDirectorsByFilm(film);
+    }
+
+    @Override
+    public List<Film> findFilmsByDirector(Long directorId, String sortBy) {
+        String sqlByYear = "SELECT fd.film_id " +
+                "FROM films_directors AS fd " +
+                "LEFT OUTER JOIN films ON fd.film_id = films.film_id " +
+                "WHERE director_id = ? " +
+                "ORDER BY films.release_date";
+
+        String sqlByLikes = "SELECT fd.film_id, COUNT(fl.user_id) AS p " +
+                "FROM films_directors AS fd " +
+                "LEFT OUTER JOIN films_likes AS fl ON fd.film_id = fl.film_id " +
+                "WHERE director_id = ? " +
+                "GROUP BY fd.film_id " +
+                "ORDER BY p DESC ";
+
+        List<Film> films = new ArrayList<>();
+        if (sortBy.equals("year")) {
+            List<Long> filmsId = jdbcTemplate.query(sqlByYear, (rs, rowNum) -> rs.getLong("film_id"), directorId);
+            for (Long id : filmsId) {
+                films.add(findById(id));
+            }
+            return films;
+        }
+        else {
+            List<Long> filmsId = jdbcTemplate.query(sqlByLikes, (rs, rowNum) -> rs.getLong("film_id"), directorId);
+            for (Long id : filmsId) {
+                films.add(findById(id));
+            }
+            return films;
+        }
+    }
+
+    @Override
+    public void createDirectorsByFilm(Film film) {
+        String sql = "INSERT INTO films_directors (film_id, director_id) VALUES(?, ?)";
+        Set<Director> directors = film.getDirectors();
+        if (directors == null) {
+            return;
+        }
+        for (Director director : directors) {
+            jdbcTemplate.update(sql, film.getId(), director.getId());
+        }
     }
 }

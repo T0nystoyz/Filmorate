@@ -24,4 +24,14 @@ public interface FilmStorage extends CommonStorage<Film> {
     
     List<Film> commonMovies (Long userId, Long friendId);
 
+    void createDirectorsByFilm(Film film);
+
+    void updateDirectorsByFilm(Film film);
+
+    List<Film> findFilmsByDirector(Long directorId, String sortBy);
+
 }
+
+
+
+

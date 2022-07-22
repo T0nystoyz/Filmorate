@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Rating;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.DirectorStorage;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.GenreStorage;
 import ru.yandex.practicum.filmorate.storage.db_impl.FilmDbStorage;
@@ -26,18 +27,21 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
     private final LocalDate MIN_DATE = LocalDate.of(1895, 12, 28);
     private final UserService userService;
     private final GenreStorage genreStorage;
+    private final DirectorStorage directorStorage;
 
     @Autowired
-    public FilmService(FilmStorage storage, UserService userService, GenreStorage genreStorage) {
+    public FilmService(FilmStorage storage, UserService userService, GenreStorage genreStorage, DirectorStorage directorStorage) {
         super(storage);
         this.userService = userService;
         this.genreStorage = genreStorage;
+        this.directorStorage = directorStorage;
     }
 
     @Override
     public Film create(Film film) {
         film = super.create(film);
         storage.createGenresByFilm(film);
+        storage.createDirectorsByFilm(film);
         log.info("Добавлен фильма {}", film);
         return film;
     }
@@ -46,6 +50,7 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
     public Film update(Film film) {
         film = super.update(film);
         storage.updateGenresByFilm(film);
+        storage.updateDirectorsByFilm(film);
         log.info("Обновлён фильм {}", film);
         return film;
     }
@@ -66,6 +71,7 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
 
     private void loadData(Film film) {
         film.setGenres(genreStorage.getGenresByFilm(film));
+        film.setDirectors(directorStorage.getDirectorsByFilm(film));
         storage.loadLikes(film);
     }
 
@@ -158,6 +164,13 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
         }
         commonMovies.sort(Comparator.comparing(Film::getLikesCount).reversed());
         return commonMovies;
+    }
+
+    public List<Film> findFilmsByDirector(Long directorId, String sortBy) {
+        List<Film> films = storage.findFilmsByDirector(directorId, sortBy);
+        if (films.isEmpty()) throw  new NotFoundException("");
+        films.forEach(this::loadData);
+        return films;
     }
 
 }

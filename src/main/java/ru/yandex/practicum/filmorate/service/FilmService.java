@@ -137,6 +137,11 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
     }
 
     public List<Film> commonMovies(Long userId, Long friendId) {
-        return storage.commonMovies(userId, friendId);
+         List <Film> commonMovies = storage.commonMovies(userId, friendId);
+        for (var film : commonMovies) {
+            storage.loadLikes(film);
+        }
+        commonMovies.sort(Comparator.comparing(Film::getLikesCount).reversed());
+        return commonMovies;
     }
 }

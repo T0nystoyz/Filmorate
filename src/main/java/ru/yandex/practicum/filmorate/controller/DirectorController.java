@@ -16,9 +16,4 @@ public class DirectorController extends AbstractController<Director, DirectorSer
     public DirectorController(DirectorService service) {
         super(service);
     }
-
-    @DeleteMapping("/{id}")
-    public void deleteDirector(@PathVariable("id") Long directorId) {
-        super.service.deleteDirector(directorId);
-    }
 }

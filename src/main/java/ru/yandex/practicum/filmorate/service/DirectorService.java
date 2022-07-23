@@ -16,9 +16,4 @@ public class DirectorService extends AbstractService<Director, DirectorStorage> 
     @Override
     public void validationBeforeCreate(Director director) {
     }
-
-    public void deleteDirector(Long directorId) {
-        super.storage.deleteDirector(directorId);
-    }
-
 }

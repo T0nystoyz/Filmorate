@@ -18,4 +18,6 @@ public interface CommonService <E extends AbstractEntity>{
     void validateId(Long id);
 
     E findById(Long id);
+
+    void delete(Long id);
 }

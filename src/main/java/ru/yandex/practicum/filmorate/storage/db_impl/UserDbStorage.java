@@ -47,9 +47,9 @@ public class UserDbStorage implements UserStorage {
 
     public void loadFriends(User user) {
         String sql =
-                    "(SELECT USER_ID2 ID FROM FRIENDSHIP  WHERE USER_ID1 = ?) " +
-                    "UNION " +
-                    "(SELECT USER_ID1 ID FROM FRIENDSHIP  WHERE USER_ID2 = ? AND  CONFIRMED = true)";
+                "(SELECT USER_ID2 ID FROM FRIENDSHIP  WHERE USER_ID1 = ?) " +
+                        "UNION " +
+                        "(SELECT USER_ID1 ID FROM FRIENDSHIP  WHERE USER_ID2 = ? AND  CONFIRMED = true)";
         SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql, user.getId(), user.getId());
         while (sqlRowSet.next()) {
             user.addFriend(sqlRowSet.getLong("id"));
@@ -81,10 +81,16 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User update(User user) {
         String sql =
-                    "UPDATE USERS SET LOGIN = ?, EMAIL = ?, NAME = ?, BIRTHDAY = ?" +
-                    "WHERE USER_ID = ?";
+                "UPDATE USERS SET LOGIN = ?, EMAIL = ?, NAME = ?, BIRTHDAY = ?" +
+                        "WHERE USER_ID = ?";
         jdbcTemplate.update(sql, user.getLogin(), user.getEmail(), user.getName(), user.getBirthday(), user.getId());
         return user;
+    }
+
+    @Override
+    public void delete(Long id) {
+        final String sql = "DELETE FROM USERS WHERE USER_ID = ?";
+        jdbcTemplate.update(sql, id);
     }
 
     @Override
@@ -102,10 +108,10 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public void updateFriendship(Long id1, Long id2, boolean confirmed,  Long filterId1, Long filterId2) {
+    public void updateFriendship(Long id1, Long id2, boolean confirmed, Long filterId1, Long filterId2) {
         String sql =
-                    "UPDATE FRIENDSHIP SET USER_ID1 = ?, USER_ID2 = ?, CONFIRMED = ? " +
-                    "WHERE USER_ID1 = ? AND USER_ID2 = ?";
+                "UPDATE FRIENDSHIP SET USER_ID1 = ?, USER_ID2 = ?, CONFIRMED = ? " +
+                        "WHERE USER_ID1 = ? AND USER_ID2 = ?";
         jdbcTemplate.update(sql, id1, id2, confirmed, filterId1, filterId2);
     }
 

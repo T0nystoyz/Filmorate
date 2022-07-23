@@ -35,4 +35,9 @@ public abstract class AbstractController <E extends AbstractEntity, S extends Co
     public E update(@Valid @RequestBody E data) {
         return service.update(data);
     }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
+    }
 }

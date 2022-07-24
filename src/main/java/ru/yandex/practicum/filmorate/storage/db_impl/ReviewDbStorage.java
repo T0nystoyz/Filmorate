@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.ReviewStorage;
@@ -13,6 +14,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Component
 @Primary
@@ -26,7 +28,7 @@ public class ReviewDbStorage implements ReviewStorage {
 
     @Override
     public Review findById(Long id) {
-        String sql = "SELECT * FROM REVIEWS WHERE REVIEWS_ID = ?";
+        String sql = "SELECT * FROM REVIEWS WHERE REVIEW_ID = ?";
         List<Review> result = jdbcTemplate.query(sql, this::mapToReview, id);
         if (result.isEmpty()) {
             return null;
@@ -36,7 +38,7 @@ public class ReviewDbStorage implements ReviewStorage {
 
     private Review mapToReview(ResultSet resultSet, int rowNum) throws SQLException {
         Review review = new Review();
-        Long id = resultSet.getLong("REVIEWS_ID");
+        Long id = resultSet.getLong("REVIEW_ID");
         review.setReviewId(id);
         review.setFilmId(resultSet.getLong("FILM_ID"));
         review.setUserId(resultSet.getLong("USER_ID"));
@@ -47,7 +49,7 @@ public class ReviewDbStorage implements ReviewStorage {
 
     @Override
     public List<Review> findAll() {
-        String sql = "SELECT * FROM REVIEWS WHERE REVIEWS_ID";
+        String sql = "SELECT * FROM REVIEWS WHERE REVIEW_ID";
         return jdbcTemplate.query(sql, this::mapToReview);
     }
 
@@ -55,7 +57,7 @@ public class ReviewDbStorage implements ReviewStorage {
     public Review create(Review review) {
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("REVIEWS")
-                .usingGeneratedKeyColumns("REVIEWS_ID");
+                .usingGeneratedKeyColumns("REVIEW_ID");
 
         Map<String, Object> values = new HashMap<>();
         values.put("FILM_ID", review.getFilmId());
@@ -73,7 +75,7 @@ public class ReviewDbStorage implements ReviewStorage {
     public Review update(Review review) {
         String sql =
                 "UPDATE REVIEWS SET DESCRIPTION = ?, POSITIVE = ? " +
-                "WHERE REVIEWS_ID = ?";
+                "WHERE REVIEW_ID = ?";
         jdbcTemplate.update(sql, review.getContent(), review.getIsPositive(),
                 review.getId());
         return review;
@@ -81,17 +83,26 @@ public class ReviewDbStorage implements ReviewStorage {
 
     @Override
     public void delete(Long id) {
-        jdbcTemplate.update("DELETE FROM REVIEWS WHERE REVIEWS_ID = ?", id);
+        jdbcTemplate.update("DELETE FROM REVIEWS WHERE REVIEW_ID = ?", id);
     }
 
     @Override
     public void loadGrades(Review review) {
-        int i=1;
-
+        String sql = "SELECT * FROM GRADES WHERE  REVIEW_ID = ?";
+        SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sql, review.getId());
+        while (sqlRowSet.next()) {
+            review.addGrade(sqlRowSet.getLong("USER_ID"), sqlRowSet.getBoolean("POSITIVE"));
+        }
     }
 
     @Override
     public void saveGrades(Review review) {
+        jdbcTemplate.update("DELETE FROM GRADES WHERE REVIEW_ID = ?", review.getId());
 
+        String sql = "INSERT INTO GRADES (REVIEW_ID, USER_ID, POSITIVE) VALUES(?, ?, ?)";
+        Map<Long, Boolean>  grades = review.getGrades();
+        for (var grade : grades.entrySet()) {
+            jdbcTemplate.update(sql, review.getId(), grade.getKey(), grade.getValue());
+        }
     }
 }

@@ -67,6 +67,4 @@ public class Review extends AbstractEntity {
     public Map<Long, Boolean> getGrades() {
         return new HashMap<>(grades);
     }
-
-
 }

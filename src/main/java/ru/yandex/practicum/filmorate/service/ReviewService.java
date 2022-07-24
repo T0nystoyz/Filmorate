@@ -62,7 +62,7 @@ public class ReviewService extends AbstractService<Review, ReviewStorage> {
         Review review = this.findById(id);
         User user = userService.findById(userId);
         validateForGrade(review, user);
-        //grade.addLike(userId);
+        review.addGrade(userId, positive);
         storage.saveGrades(review);
     }
 
@@ -70,7 +70,7 @@ public class ReviewService extends AbstractService<Review, ReviewStorage> {
         Review review = this.findById(id);
         User user = userService.findById(userId);
         validateForGrade(review, user);
-        //film.removeLike(userId);
+        review.delGrade(userId);
         storage.saveGrades(review);
     }
 

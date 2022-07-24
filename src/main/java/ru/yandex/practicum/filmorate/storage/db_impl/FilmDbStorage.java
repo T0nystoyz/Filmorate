@@ -64,24 +64,24 @@ public class FilmDbStorage implements FilmStorage {
     public List<Film> findAllByYear(int year) {
         String sql =
                 "SELECT f.FILM_ID, f.NAME, f.DESCRIPTION, f.RELEASE_DATE, f.DURATION, f.RATING_ID, r.NAME R_NAME " +
-                "FROM FILMS f JOIN RATINGS r ON f.RATING_ID = r.RATING_ID " +
-                "WHERE YEAR(f.RELEASE_DATE) = ? ORDER BY f.FILM_ID";
+                        "FROM FILMS f JOIN RATINGS r ON f.RATING_ID = r.RATING_ID " +
+                        "WHERE YEAR(f.RELEASE_DATE) = ? ORDER BY f.FILM_ID";
         return jdbcTemplate.query(sql, this::mapToFilm, year);
     }
 
     public List<Film> findAllByGenre(int genreId) {
         String sql =
                 "SELECT f.FILM_ID, f.NAME, f.DESCRIPTION, f.RELEASE_DATE, f.DURATION, f.RATING_ID, r.NAME R_NAME " +
-                "FROM FILMS f JOIN RATINGS r ON f.RATING_ID = r.RATING_ID " +
-                "WHERE f.FILM_ID IN (SELECT FILMS_GENRES.FILM_ID FROM FILMS_GENRES WHERE GENRE_ID = ?) ORDER BY f.FILM_ID";
+                        "FROM FILMS f JOIN RATINGS r ON f.RATING_ID = r.RATING_ID " +
+                        "WHERE f.FILM_ID IN (SELECT FILMS_GENRES.FILM_ID FROM FILMS_GENRES WHERE GENRE_ID = ?) ORDER BY f.FILM_ID";
         return jdbcTemplate.query(sql, this::mapToFilm, genreId);
     }
 
     public List<Film> findAllByGenreAndYear(int genreId, int year) {
         String sql =
                 "SELECT f.FILM_ID, f.NAME, f.DESCRIPTION, f.RELEASE_DATE, f.DURATION, f.RATING_ID, r.NAME R_NAME " +
-                "FROM FILMS f JOIN RATINGS r ON f.RATING_ID = r.RATING_ID " +
-                "WHERE f.FILM_ID IN (SELECT FILMS_GENRES.FILM_ID FROM FILMS_GENRES WHERE GENRE_ID = ?) " +
+                        "FROM FILMS f JOIN RATINGS r ON f.RATING_ID = r.RATING_ID " +
+                        "WHERE f.FILM_ID IN (SELECT FILMS_GENRES.FILM_ID FROM FILMS_GENRES WHERE GENRE_ID = ?) " +
                         "AND YEAR(f.RELEASE_DATE) = ? ORDER BY f.FILM_ID";
         return jdbcTemplate.query(sql, this::mapToFilm, genreId, year);
     }
@@ -126,7 +126,7 @@ public class FilmDbStorage implements FilmStorage {
 
         String sql = "INSERT INTO FILMS_LIKES (FILM_ID, USER_ID) VALUES(?, ?)";
         Set<Long> likes = film.getLikes();
-        for (var like : likes ) {
+        for (var like : likes) {
             jdbcTemplate.update(sql, film.getId(), like);
         }
     }
@@ -148,19 +148,20 @@ public class FilmDbStorage implements FilmStorage {
         if (genres == null) {
             return;
         }
-        for (var genre : genres ) {
+        for (var genre : genres) {
             jdbcTemplate.update(sql, film.getId(), genre.getId());
         }
     }
 
-    @Override public void updateGenresByFilm(Film film) {
+    @Override
+    public void updateGenresByFilm(Film film) {
         String sql = "DELETE FROM FILMS_GENRES WHERE FILM_ID = ?";
         jdbcTemplate.update(sql, film.getId());
         createGenresByFilm(film);
     }
 
     @Override
-    public List<Film> commonMovies (Long userId, Long friendId) {
+    public List<Film> commonMovies(Long userId, Long friendId) {
         String sql =
                 "SELECT f.FILM_ID, f.NAME, f.DESCRIPTION, f.RELEASE_DATE, f.DURATION, f.RATING_ID, r.NAME R_NAME " +
                         "FROM FILMS_LIKES fl1 JOIN FILMS_LIKES fl2 ON " +
@@ -203,8 +204,7 @@ public class FilmDbStorage implements FilmStorage {
                 films.add(findById(id));
             }
             return films;
-        }
-        else {
+        } else {
             List<Long> filmsId = jdbcTemplate.query(sqlByLikes, (rs, rowNum) -> rs.getLong("film_id"), directorId);
             for (Long id : filmsId) {
                 films.add(findById(id));
@@ -223,5 +223,40 @@ public class FilmDbStorage implements FilmStorage {
         for (Director director : directors) {
             jdbcTemplate.update(sql, film.getId(), director.getId());
         }
+    }
+
+    @Override
+    public List<Film> searchBy(String queryString, String searchBy) {
+        String searchByTitle = "SELECT f.FILM_ID, f.NAME, f.DESCRIPTION, f.RELEASE_DATE, f.DURATION, f.RATING_ID, r.NAME R_NAME  FROM films AS f LEFT OUTER JOIN " +
+                "(SELECT film_id, COUNT (*) likes_count FROM FILMS_LIKES GROUP BY film_id) " +
+                "AS l ON f.film_id = l.film_id " +
+                "LEFT OUTER JOIN ratings AS r ON f.rating_id = r.rating_id " +
+                "WHERE f.name ILIKE CONCAT('%', ?, '%')";
+        String searchByDir = "SELECT f.FILM_ID, f.NAME, f.DESCRIPTION, f.RELEASE_DATE, f.DURATION, f.RATING_ID, r.NAME R_NAME  FROM films AS f LEFT OUTER JOIN " +
+                "(SELECT film_id, COUNT (*) likes_count FROM FILMS_LIKES GROUP BY film_id) " +
+                "AS l ON f.film_id = l.film_id " +
+                "LEFT OUTER JOIN ratings AS r ON f.rating_id = r.rating_id " +
+                "LEFT OUTER JOIN FILMS_DIRECTORS AS fd ON f.FILM_ID = fd.FILM_ID " +
+                "LEFT OUTER JOIN DIRECTORS AS d ON fd.DIRECTOR_ID = d.DIRECTOR_ID " +
+                "WHERE d.name ILIKE CONCAT('%', ?, '%')";
+        final String searchDirectorFilm = searchByDir + " UNION ALL " + searchByTitle + " ORDER BY FILM_ID desc";
+        final String searchFilmDirector = searchByTitle + " UNION ALL " + searchByDir + " ORDER BY FILM_ID desc";
+
+        List<Film> result = null;
+        switch (searchBy) {
+            case "director":
+                result = jdbcTemplate.query(searchByDir, this::mapToFilm, queryString);
+                break;
+            case "title":
+                result = jdbcTemplate.query(searchByTitle, this::mapToFilm, queryString);
+                break;
+            case "director,title":
+                result = jdbcTemplate.query(searchDirectorFilm, this::mapToFilm, queryString, queryString);
+                break;
+            case "title,director":
+                result = jdbcTemplate.query(searchFilmDirector, this::mapToFilm, queryString, queryString);
+                break;
+        }
+        return result;
     }
 }

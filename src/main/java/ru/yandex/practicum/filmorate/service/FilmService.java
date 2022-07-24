@@ -11,7 +11,6 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.DirectorStorage;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.GenreStorage;
-import ru.yandex.practicum.filmorate.storage.db_impl.FilmDbStorage;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -134,7 +133,7 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
     }
 
     public List<Film> findPopularMovies(int count, int genreId, int year) {
-        List<Film> films = new ArrayList<>();
+        List<Film> films;
         if (genreId == 0 && year == 0) {
             films = this.findAll();
         } else if (genreId == 0 && year != 0) {
@@ -169,6 +168,12 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
     public List<Film> findFilmsByDirector(Long directorId, String sortBy) {
         List<Film> films = storage.findFilmsByDirector(directorId, sortBy);
         if (films.isEmpty()) throw  new NotFoundException("");
+        films.forEach(this::loadData);
+        return films;
+    }
+
+    public List<Film> searchBy(String queryString, String searchBy) {
+        List<Film> films = storage.searchBy(queryString, searchBy);
         films.forEach(this::loadData);
         return films;
     }

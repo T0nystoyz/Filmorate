@@ -44,4 +44,11 @@ public class FilmController extends AbstractController<Film, FilmService> {
     public List<Film> findFilmsByDirector(@PathVariable Long directorId, @RequestParam String sortBy) {
         return service.findFilmsByDirector(directorId, sortBy);
     }
+
+    @GetMapping("search")
+    public List<Film> search(@RequestParam(required = false) String query,
+                             @RequestParam(required = false) String by) {
+        return service.searchBy(query, by);
+    }
+
 }

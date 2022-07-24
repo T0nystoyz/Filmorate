@@ -4,12 +4,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.ReviewStorage;
 
+import javax.validation.ValidationException;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -25,7 +27,8 @@ public class ReviewService extends AbstractService<Review, ReviewStorage> {
     @Override
     public List<Review> findAll() {
         List<Review> reviews = super.findAll();
-        reviews.forEach(x->storage.loadGrades(x));
+        reviews.forEach(storage::loadGrades);
+        reviews.sort(Comparator.comparing(Review::getUseful).reversed());
         return reviews;
     }
 
@@ -40,6 +43,9 @@ public class ReviewService extends AbstractService<Review, ReviewStorage> {
     public void validationBeforeCreate(Review review) {
         super.validateId(review.getFilmId());
         super.validateId(review.getUserId());
+        if (review.getIsPositive() == null) {
+            throw new ValidationException("review isPositive не заполнено!");
+        }
     }
 
     public void addLike(Long id, Long userId) {
@@ -85,5 +91,20 @@ public class ReviewService extends AbstractService<Review, ReviewStorage> {
             log.warn(message);
             throw new NotFoundException(message);
         }
+    }
+
+    public List<Review> findAllByFilm(Long filmId, Integer count) {
+        List<Review> reviews;
+        if (filmId == null) {
+            reviews = storage.findAll();
+        } else {
+            reviews = storage.findAllByFilm(filmId);
+        }
+        reviews.forEach(storage::loadGrades);
+
+        return reviews.stream()
+                .sorted(Comparator.comparing(Review::getUseful).reversed())
+                .limit(count)
+                .collect(Collectors.toList());
     }
 }

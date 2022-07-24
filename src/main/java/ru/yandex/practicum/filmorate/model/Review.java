@@ -9,9 +9,7 @@ import org.springframework.lang.NonNull;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -21,12 +19,11 @@ public class Review extends AbstractEntity {
     @Size(max = 500)
     private String content;
     @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
-    @NonNull
     private Boolean isPositive;
     private Long userId;
     private Long filmId;
-    @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
-    private int useful;
+    //@Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
+    //private int useful;
     @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
     private final Map<Long, Boolean> grades = new HashMap<>();
 
@@ -38,22 +35,24 @@ public class Review extends AbstractEntity {
         super.setId(reviewId);
     }
 
-    public boolean getIsPositive() {
+    public Boolean getIsPositive() {
         return isPositive;
     }
 
-    public void setIsPositive(boolean positive) {
+    public void setIsPositive(Boolean positive) {
         isPositive = positive;
     }
 
     public int getUseful() {
-        //todo
-        return 0;
-    }
-
-    public void setUseful(int useful) {
-        //todo
-
+        int useful = 0;
+        for (var positive : grades.values()) {
+            if (positive) {
+                useful++;
+            } else {
+                useful--;
+            }
+        }
+        return useful;
     }
 
     public void addGrade(Long userId, boolean positive) {
@@ -67,4 +66,5 @@ public class Review extends AbstractEntity {
     public Map<Long, Boolean> getGrades() {
         return new HashMap<>(grades);
     }
+
 }

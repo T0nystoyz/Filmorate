@@ -14,7 +14,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @Component
 @Primary
@@ -49,8 +48,14 @@ public class ReviewDbStorage implements ReviewStorage {
 
     @Override
     public List<Review> findAll() {
-        String sql = "SELECT * FROM REVIEWS WHERE REVIEW_ID";
+        String sql = "SELECT * FROM REVIEWS";
         return jdbcTemplate.query(sql, this::mapToReview);
+    }
+
+    @Override
+    public List<Review> findAllByFilm(Long filmId) {
+        String sql = "SELECT * FROM REVIEWS WHERE FILM_ID = ?";
+        return jdbcTemplate.query(sql, this::mapToReview, filmId);
     }
 
     @Override

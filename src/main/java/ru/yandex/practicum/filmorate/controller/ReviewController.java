@@ -37,9 +37,9 @@ public class ReviewController extends AbstractController<Review, ReviewService> 
         service.delDislike(id, userId);
     }
 
-    @GetMapping(params = { "filmId", "count" })
+    @GetMapping(params = {"filmId"})
     public List<Review> findAllByFilm(@RequestParam(required = false) Long filmId,
                                       @RequestParam(defaultValue = "10") Integer count) {
-        return new ArrayList<>();
+        return service.findAllByFilm(filmId, count);
     }
 }

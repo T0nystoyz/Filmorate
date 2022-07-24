@@ -84,8 +84,8 @@ CREATE TABLE IF NOT EXISTS reviews (
     user_id bigint   NOT NULL,
     description varchar(500)   NOT NULL,
     positive boolean    NOT NULL,
-    CONSTRAINT fk_reviews_film_id FOREIGN KEY(film_id) REFERENCES films (film_id),
-    CONSTRAINT fk_reviews_user_id FOREIGN KEY(user_id) REFERENCES users (user_id),
+    CONSTRAINT fk_reviews_film_id FOREIGN KEY(film_id) REFERENCES films (film_id) ON DELETE CASCADE,
+    CONSTRAINT fk_reviews_user_id FOREIGN KEY(user_id) REFERENCES users (user_id) ON DELETE CASCADE,
     CONSTRAINT uc_film_id_user_id UNIQUE (film_id, user_id)
 );
 
@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS grades (
     reviews_id bigint   NOT NULL,
     user_id bigint      NOT NULL,
     positive boolean    NOT NULL,
-    CONSTRAINT fk_grades_reviews_id FOREIGN KEY(reviews_id) REFERENCES reviews (reviews_id),
-    CONSTRAINT fk_grades_user_id FOREIGN KEY(user_id) REFERENCES users (user_id)
+    CONSTRAINT fk_grades_reviews_id FOREIGN KEY(reviews_id) REFERENCES reviews (reviews_id) ON DELETE CASCADE,
+    CONSTRAINT fk_grades_user_id FOREIGN KEY(user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
 

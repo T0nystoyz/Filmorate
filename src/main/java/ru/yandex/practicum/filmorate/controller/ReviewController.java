@@ -19,26 +19,22 @@ public class ReviewController extends AbstractController<Review, ReviewService> 
 
     @PutMapping("/{id}/like/{userId}")
     public void addLike(@PathVariable Long id, @PathVariable Long userId) {
-        //service.addLike(id, userId);
-        System.out.println("like");
+        service.addLike(id, userId);
     }
 
     @PutMapping("/{id}/dislike/{userId}")
     public void addDislike(@PathVariable Long id, @PathVariable Long userId) {
-        //service.addLike(id, userId);
-        System.out.println("Dislike");
+        service.addDislike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public void delLike(@PathVariable Long id, @PathVariable Long userId) {
-        //service.addLike(id, userId);
-        System.out.println("del like");
+        service.delLike(id, userId);
     }
 
     @DeleteMapping("/{id}/dislike/{userId}")
     public void delDislike(@PathVariable Long id, @PathVariable Long userId) {
-        //service.addLike(id, userId);
-        System.out.println("del Dislike");
+        service.delDislike(id, userId);
     }
 
     @GetMapping(params = { "filmId", "count" })

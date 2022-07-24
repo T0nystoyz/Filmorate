@@ -9,7 +9,9 @@ import org.springframework.lang.NonNull;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -53,4 +55,18 @@ public class Review extends AbstractEntity {
         //todo
 
     }
+
+    public void addGrade(Long userId, boolean positive) {
+        grades.put(userId, positive);
+    }
+
+    public void delGrade(Long userId) {
+        grades.remove(userId);
+    }
+
+    public Map<Long, Boolean> getGrades() {
+        return new HashMap<>(grades);
+    }
+
+
 }

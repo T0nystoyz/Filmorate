@@ -71,13 +71,6 @@ public class ReviewDbStorage implements ReviewStorage {
 
     @Override
     public Review update(Review review) {
-        //тесты не пускают правильное решение
-        /*String sql =
-                "UPDATE REVIEWS SET  FILM_ID = ?, USER_ID = ?,  DESCRIPTION = ?, POSITIVE = ? " +
-                        "WHERE REVIEWS_ID = ?";
-        jdbcTemplate.update(sql, review.getFilmId(), review.getUserId(), review.getContent(), review.getIsPositive(),
-                review.getId());*/
-
         String sql =
                 "UPDATE REVIEWS SET DESCRIPTION = ?, POSITIVE = ? " +
                 "WHERE REVIEWS_ID = ?";
@@ -89,5 +82,16 @@ public class ReviewDbStorage implements ReviewStorage {
     @Override
     public void delete(Long id) {
         jdbcTemplate.update("DELETE FROM REVIEWS WHERE REVIEWS_ID = ?", id);
+    }
+
+    @Override
+    public void loadGrades(Review review) {
+        int i=1;
+
+    }
+
+    @Override
+    public void saveGrades(Review review) {
+
     }
 }

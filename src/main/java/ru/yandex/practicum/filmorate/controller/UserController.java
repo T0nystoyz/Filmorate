@@ -2,8 +2,11 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.enums.EventType;
+import ru.yandex.practicum.filmorate.model.enums.Operation;
 import ru.yandex.practicum.filmorate.service.RecommendationsService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -46,5 +49,10 @@ public class UserController extends AbstractController<User, UserService> {
     @GetMapping("/{id}/recommendations")
     public Set<Film> getRecommendedFilms(@PathVariable("id") Long userId) {
         return recommendationsService.getRecommendedFilms(userId);
+    }
+
+    @GetMapping("/{id}/feed")
+    public List<Event> getFeed(@PathVariable  Long id) {
+        return service.getFeed(id);
     }
 }

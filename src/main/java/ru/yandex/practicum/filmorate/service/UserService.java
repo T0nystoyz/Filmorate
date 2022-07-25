@@ -4,7 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserAlreadyExistException;
+import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.enums.EventType;
+import ru.yandex.practicum.filmorate.model.enums.Operation;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.ArrayList;
@@ -141,5 +144,18 @@ public class UserService extends AbstractService<User, UserStorage> {
 
     public List<Long> getUsersFilms(Long userId) {
         return storage.getUsersFilms(userId);
+    }
+
+    public List<Event> getFeed(Long id) {
+        List<Event> events = new ArrayList<>();
+        Event event = new Event();
+        event.setEventId(10L);
+        event.setTimestamp(100L);
+        event.setEventType(EventType.FRIEND);
+        event.setOperation(Operation.ADD);
+        event.setUserId(2L);
+        event.setEntityId(20L);
+        events.add(event);
+        return events;
     }
 }

@@ -30,6 +30,8 @@ public interface FilmStorage extends CommonStorage<Film> {
 
     List<Film> findFilmsByDirector(Long directorId, String sortBy);
 
+    List<Film> searchBy(String queryString, String searchBy);
+
 }
 
 

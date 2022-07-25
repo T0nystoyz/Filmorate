@@ -138,4 +138,8 @@ public class UserService extends AbstractService<User, UserStorage> {
 
         return friends;
     }
+
+    public List<Long> getUsersFilms(Long userId) {
+        return storage.getUsersFilms(userId);
+    }
 }

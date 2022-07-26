@@ -24,13 +24,16 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
     private final static String MSG_ERR_MPA = "Не заполнен рейтинг MPA";
 
     private final LocalDate MIN_DATE = LocalDate.of(1895, 12, 28);
+    private final EventService eventService;
     private final UserService userService;
     private final GenreStorage genreStorage;
     private final DirectorStorage directorStorage;
 
     @Autowired
-    public FilmService(FilmStorage storage, UserService userService, GenreStorage genreStorage, DirectorStorage directorStorage) {
+    public FilmService(FilmStorage storage, EventService eventService, UserService userService,
+                       GenreStorage genreStorage, DirectorStorage directorStorage) {
         super(storage);
+        this.eventService = eventService;
         this.userService = userService;
         this.genreStorage = genreStorage;
         this.directorStorage = directorStorage;
@@ -122,6 +125,7 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
         validateLike(film, user);
         film.addLike(userId);
         storage.saveLikes(film);
+        eventService.createAddLikeEvent(userId, id);
     }
 
     public void removeLike(Long id, Long userId) {
@@ -130,6 +134,7 @@ public class FilmService extends AbstractService<Film, FilmStorage> {
         validateLike(film, user);
         film.removeLike(userId);
         storage.saveLikes(film);
+        eventService.createRemoveLikeEvent(userId, id);
     }
 
     public List<Film> findPopularMovies(int count, int genreId, int year) {

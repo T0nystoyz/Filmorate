@@ -132,5 +132,4 @@ public class UserDbStorage implements UserStorage {
         String sql = "SELECT film_id FROM films_likes WHERE user_id = ?";
         return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getLong("film_id"), userId);
     }
-
 }

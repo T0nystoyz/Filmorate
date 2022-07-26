@@ -22,8 +22,6 @@ public class Review extends AbstractEntity {
     private Boolean isPositive;
     private Long userId;
     private Long filmId;
-    //@Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
-    //private int useful;
     @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
     private final Map<Long, Boolean> grades = new HashMap<>();
 

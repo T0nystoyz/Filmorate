@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.enums.Operation;
 import ru.yandex.practicum.filmorate.storage.ReviewStorage;
 
 import javax.validation.ValidationException;
@@ -17,11 +18,35 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ReviewService extends AbstractService<Review, ReviewStorage> {
     private final UserService userService;
+    private final EventService eventService;
 
     @Autowired
-    public ReviewService(ReviewStorage storage, UserService userService) {
+    public ReviewService(ReviewStorage storage, UserService userService, EventService eventService) {
         super(storage);
         this.userService = userService;
+        this.eventService = eventService;
+    }
+
+    @Override
+    public Review create(Review review) {
+        review = super.create(review);
+        eventService.createReviewEvent(review.getUserId(), Operation.ADD, review.getReviewId());
+        return review;
+    }
+
+    @Override
+    public Review update(Review review) {
+        Review oldReview = findById(review.getReviewId());
+        eventService.createReviewEvent(oldReview.getUserId(), Operation.UPDATE, review.getReviewId());
+        review = super.update(review);
+        return review;
+    }
+
+    @Override
+    public void delete(Long id) {
+        Review review = super.findById(id);
+        eventService.createReviewEvent(review.getUserId(), Operation.REMOVE, review.getReviewId());
+        super.delete(id);
     }
 
     @Override

@@ -50,8 +50,12 @@ public class EventService {
         return createEvent(userID, EventType.REVIEW, operation, reviewId);
     }
 
-    public Event createFriendEvent(Long userID, Operation operation, Long friendId) {
-        return createEvent(userID, EventType.FRIEND, operation, friendId);
+    public Event createAddFriendEvent(Long userID, Long friendId) {
+        return createEvent(userID, EventType.FRIEND, Operation.ADD, friendId);
+    }
+
+    public Event createRemoveFriendEvent(Long userID, Long friendId) {
+        return createEvent(userID, EventType.FRIEND, Operation.REMOVE, friendId);
     }
 
 }

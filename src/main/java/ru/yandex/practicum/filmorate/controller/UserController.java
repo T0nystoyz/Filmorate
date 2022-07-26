@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.model.enums.Operation;
 import ru.yandex.practicum.filmorate.service.RecommendationsService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
+import javax.validation.Valid;
 import java.util.*;
 
 //Переписал, чтобы меньше кода была наследниках
@@ -54,5 +55,10 @@ public class UserController extends AbstractController<User, UserService> {
     @GetMapping("/{id}/feed")
     public List<Event> getFeed(@PathVariable  Long id) {
         return service.getFeed(id);
+    }
+
+    @PostMapping(("/{id}/feed"))
+    public Event createEvent(@Valid @RequestBody Event event) {
+        return service.createEvent(event);
     }
 }

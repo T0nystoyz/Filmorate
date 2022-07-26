@@ -147,15 +147,10 @@ public class UserService extends AbstractService<User, UserStorage> {
     }
 
     public List<Event> getFeed(Long id) {
-        List<Event> events = new ArrayList<>();
-        Event event = new Event();
-        event.setEventId(10L);
-        event.setTimestamp(100L);
-        event.setEventType(EventType.FRIEND);
-        event.setOperation(Operation.ADD);
-        event.setUserId(2L);
-        event.setEntityId(20L);
-        events.add(event);
-        return events;
+      return storage.getFeed(id);
+    }
+
+    public Event createEvent(Event event) {
+        return storage.createEvent(event);
     }
 }

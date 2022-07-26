@@ -6,7 +6,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.enums.EventType;
+import ru.yandex.practicum.filmorate.model.enums.Operation;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.sql.ResultSet;
@@ -133,4 +136,43 @@ public class UserDbStorage implements UserStorage {
         return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getLong("film_id"), userId);
     }
 
+    @Override
+    public Event createEvent(Event event) {
+        SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("EVENTS")
+                .usingGeneratedKeyColumns("EVENT_ID");
+
+        Map<String, Object> values = new HashMap<>();
+        values.put("EVENT_TIMESTAMP", event.getTimestamp());
+        values.put("USER_ID", event.getUserId());
+        String eventType = event.getEventType().getTitle();
+        values.put("EVENT_TYPE", eventType);
+        String operation = event.getOperation().getTitle();
+        values.put("OPERATION", operation);
+        values.put("ENTITY_ID", event.getEntityId());
+
+        event.setEventId(simpleJdbcInsert.executeAndReturnKey(values).longValue());
+        return event;
+    }
+
+    @Override
+    public List<Event> getFeed(Long id) {
+        String sql = "SELECT * FROM EVENTS WHERE USER_ID = ?";
+        return jdbcTemplate.query(sql, this::mapToEvent, id);
+    }
+
+    private Event mapToEvent(ResultSet resultSet, int rowNum) throws SQLException {
+        Event event = new Event();
+        //user.setId(resultSet.getLong("USER_ID"));
+        event.setEventId(resultSet.getLong("EVENT_ID"));
+        event.setTimestamp(resultSet.getLong("EVENT_TIMESTAMP"));
+        EventType eventType = EventType.valueOf(resultSet.getString("EVENT_TYPE"));
+        event.setEventType(eventType);
+        Operation operation = Operation.valueOf(resultSet.getString("OPERATION"));
+        event.setOperation(operation);
+        event.setUserId(resultSet.getLong("USER_ID"));
+        event.setEntityId(resultSet.getLong("ENTITY_ID"));
+
+        return event;
+    }
 }

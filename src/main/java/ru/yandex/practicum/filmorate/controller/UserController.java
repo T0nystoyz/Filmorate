@@ -5,8 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.model.enums.EventType;
-import ru.yandex.practicum.filmorate.model.enums.Operation;
+import ru.yandex.practicum.filmorate.service.EventService;
 import ru.yandex.practicum.filmorate.service.RecommendationsService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -19,11 +18,14 @@ import java.util.*;
 public class UserController extends AbstractController<User, UserService> {
 
     RecommendationsService recommendationsService;
+    EventService eventService;
 
     @Autowired
-    public UserController(UserService service, RecommendationsService recommendationsService) {
+    public UserController(UserService service, RecommendationsService recommendationsService,
+                          EventService eventService) {
         super(service);
         this.recommendationsService = recommendationsService;
+        this.eventService = eventService;
     }
 
     @PutMapping("/{id}/friends/{friendId}")
@@ -54,11 +56,11 @@ public class UserController extends AbstractController<User, UserService> {
 
     @GetMapping("/{id}/feed")
     public List<Event> getFeed(@PathVariable  Long id) {
-        return service.getFeed(id);
+        return eventService.findEventsByUserId(id);
     }
 
     @PostMapping(("/{id}/feed"))
     public Event createEvent(@Valid @RequestBody Event event) {
-        return service.createEvent(event);
+        return eventService.createEvent(event);
     }
 }

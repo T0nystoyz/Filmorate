@@ -145,12 +145,4 @@ public class UserService extends AbstractService<User, UserStorage> {
     public List<Long> getUsersFilms(Long userId) {
         return storage.getUsersFilms(userId);
     }
-
-    public List<Event> getFeed(Long id) {
-      return storage.getFeed(id);
-    }
-
-    public Event createEvent(Event event) {
-        return storage.createEvent(event);
-    }
 }

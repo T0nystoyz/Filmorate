@@ -21,8 +21,4 @@ public interface UserStorage extends CommonStorage<User> {
     void removeFriendship(Long filterId1, Long filterId2);
 
     List<Long> getUsersFilms(Long userId);
-
-    Event createEvent(Event event);
-
-    List<Event> getFeed(Long id);
 }

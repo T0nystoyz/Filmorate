@@ -9,8 +9,8 @@ import ru.yandex.practicum.filmorate.service.EventService;
 import ru.yandex.practicum.filmorate.service.RecommendationsService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
-import javax.validation.Valid;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 
 //Переписал, чтобы меньше кода была наследниках
 @RestController
@@ -57,10 +57,5 @@ public class UserController extends AbstractController<User, UserService> {
     @GetMapping("/{id}/feed")
     public List<Event> getFeed(@PathVariable  Long id) {
         return eventService.findEventsByUserId(id);
-    }
-
-    @PostMapping(("/{id}/feed"))
-    public Event createEvent(@Valid @RequestBody Event event) {
-        return eventService.createEvent(event);
     }
 }

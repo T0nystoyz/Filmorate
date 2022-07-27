@@ -12,13 +12,11 @@ import ru.yandex.practicum.filmorate.service.UserService;
 import java.util.List;
 import java.util.Set;
 
-//Переписал, чтобы меньше кода была наследниках
 @RestController
 @RequestMapping("/users")
 public class UserController extends AbstractController<User, UserService> {
-
-    RecommendationsService recommendationsService;
-    EventService eventService;
+    private RecommendationsService recommendationsService;
+    private EventService eventService;
 
     @Autowired
     public UserController(UserService service, RecommendationsService recommendationsService,
@@ -48,7 +46,6 @@ public class UserController extends AbstractController<User, UserService> {
         return service.getCommonFriends(id1, id2);
     }
 
-    //возвращает рекомендации по фильмам для просмотра, где id - это пользователь
     @GetMapping("/{id}/recommendations")
     public Set<Film> getRecommendedFilms(@PathVariable("id") Long userId) {
         return recommendationsService.getRecommendedFilms(userId);

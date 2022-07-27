@@ -10,10 +10,14 @@ import java.util.stream.Collectors;
 
 @Service
 public class RecommendationsService {
+    private final FilmService filmService;
+    private final UserService userService;
+
     @Autowired
-    private FilmService filmService;
-    @Autowired
-    private UserService userService;
+    public RecommendationsService(FilmService filmService, UserService userService) {
+        this.filmService = filmService;
+        this.userService = userService;
+    }
 
     public Set<Film> getRecommendedFilms(Long userId) {
         Map<Long, List<Long>> filmsOfUsers = new HashMap<>();

@@ -23,10 +23,6 @@ public class EventService {
         return eventStorage.findEventsByUserID(id);
     }
 
-    public Event createEvent(Event event) {
-        return eventStorage.createEvent(event);
-    }
-
     private Event createEvent(Long userID,  EventType eventType, Operation operation, Long entityId) {
         Event event = new Event();
         event.setTimestamp(Instant.now().toEpochMilli());
@@ -57,5 +53,4 @@ public class EventService {
     public Event createRemoveFriendEvent(Long userID, Long friendId) {
         return createEvent(userID, EventType.FRIEND, Operation.REMOVE, friendId);
     }
-
 }

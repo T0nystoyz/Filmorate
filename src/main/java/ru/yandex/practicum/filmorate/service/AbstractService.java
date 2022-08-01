@@ -36,7 +36,13 @@ public abstract class AbstractService <E extends AbstractEntity, T extends Commo
     @Override
     public E update(E data) {
         validationBeforeUpdate(data);
-        return storage.update(data);
+        E newData = storage.update(data);
+        if (newData == null) {
+            log.warn(MSG_ERR_NOT_FOUND + data.getId());
+            throw new NotFoundException(MSG_ERR_NOT_FOUND + data.getId());
+        }
+
+        return newData;
     }
 
     @Override
@@ -69,5 +75,16 @@ public abstract class AbstractService <E extends AbstractEntity, T extends Commo
         }
 
         return data;
+    }
+
+    @Override
+    public void delete(Long id) {
+        validateId(id);
+        E data = storage.findById(id);
+        if (data == null) {
+            log.warn(MSG_ERR_NOT_FOUND + id);
+            throw new NotFoundException(MSG_ERR_NOT_FOUND + id);
+        }
+        storage.delete(id);
     }
 }

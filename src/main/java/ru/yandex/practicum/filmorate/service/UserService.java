@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserAlreadyExistException;
@@ -13,8 +14,12 @@ import java.util.List;
 @Service
 @Slf4j
 public class UserService extends AbstractService<User, UserStorage> {
-    public UserService(UserStorage storage) {
+    private final EventService eventService;
+
+    @Autowired
+    public UserService(UserStorage storage, EventService eventService) {
         super(storage);
+        this.eventService = eventService;
     }
 
     @Override
@@ -75,6 +80,7 @@ public class UserService extends AbstractService<User, UserStorage> {
             //Односторонняя связь, не было дружбы
             storage.insertFriendship(id, friendId);
         }
+       eventService.createAddFriendEvent(id, friendId);
     }
 
     public void removeFriend(Long id, Long friendId) {
@@ -101,6 +107,7 @@ public class UserService extends AbstractService<User, UserStorage> {
             //Совместная связь. friendId первый добавил
             storage.updateFriendship(friendId, id, false, friendId, id);
         }
+        eventService.createRemoveFriendEvent(id, friendId);
     }
 
     public List<User> getFriends(Long id) {
@@ -137,5 +144,9 @@ public class UserService extends AbstractService<User, UserStorage> {
         }
 
         return friends;
+    }
+
+    public List<Long> getUsersFilms(Long userId) {
+        return storage.getUsersFilms(userId);
     }
 }

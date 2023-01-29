@@ -3,11 +3,10 @@
 Небольшой монолит, коллективный проект яндекс практикума - социальная сеть наподобие Кинопоиска. 
 
 ## Стек
-Java 11, Maven 4.0.0, PostgreSQL 13.7-alpine, Spring Boot 2.7.2, RestTemplate, JUnit 
+Java 11, Maven 4.0.0, Spring Boot 2.7.2, RestTemplate, JUnit 
 
 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original-wordmark.svg" title="java" alt="java" width="30" height="30"/>&nbsp;
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original-wordmark.svg" title="Spring" alt="Spring" width="30" height="30"/>&nbsp;
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original-wordmark.svg" title="postgresql" alt="postgresql" width="30" height="30"/>&nbsp;
   <img src="https://voyager.postman.com/logo/postman-logo-orange-stacked.svg" title="postman" alt="postman" width="40" height="30"/>&nbsp;
   <img src="https://raw.githubusercontent.com/junit-team/junit5/86465f4f491219ad0c0cf9c64eddca7b0edeb86f/assets/img/junit5-logo.svg" title="junit" alt="junit" width="30" height="30"/>&nbsp;
   <img src="https://www.svgrepo.com/show/373829/maven.svg" title="maven" alt="maven" width="40" height="30"/>&nbsp;
